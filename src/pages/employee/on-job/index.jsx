@@ -24,11 +24,11 @@ const columns = [
   },
   {
     title: '姓名',
-    dataIndex: 'title',
+    dataIndex: 'name',
   },
   {
     title: '手机号',
-    dataIndex: 'mobile',
+    dataIndex: 'phone',
   },
   {
     title: ' 等级',
@@ -36,12 +36,12 @@ const columns = [
   },
   {
     title: '积分',
-    dataIndex: 'point',
+    dataIndex: 'points',
     search: false,
   },
   {
     title: '累计工时',
-    dataIndex: 'created_at',
+    dataIndex: 'totalWorkTime',
     search: false,
   },
   {
@@ -68,6 +68,7 @@ const columns = [
   {
     title: '入职时间',
     dataIndex: 'created_at',
+    valueType: 'dateRange',
   },
   {
     title: '操作',
@@ -89,6 +90,14 @@ const columns = [
   },
 ];
 
+async function requestFun(query) {
+  await request({
+    url: '/backend/employee/listIncumbency',
+    method: 'post',
+    data: query,
+  });
+}
+
 export default () => {
   const actionRef = useRef();
   return (
@@ -98,10 +107,7 @@ export default () => {
       cardBordered
       request={async (params = {}, sort, filter) => {
         console.log(sort, filter);
-        await waitTime(2000);
-        return request('https://proapi.azurewebsites.net/github/issues', {
-          params,
-        });
+        return await requestFun(params);
       }}
       rowKey="id"
       search={{

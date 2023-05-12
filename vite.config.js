@@ -8,9 +8,16 @@ import { resolve } from 'path';
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
-    host: 'localhost', // vite默认值
+    host: '127.0.0.1', // vite默认值
     port: 5173, // vite默认值
     open: true, // 自动打开浏览器
+    proxy: {
+      '/backend': {
+        target: 'https://hznanf.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/backend/, ''),
+      },
+    },
   },
   plugins: [
     react(),

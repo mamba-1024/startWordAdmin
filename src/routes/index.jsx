@@ -2,8 +2,8 @@ import { Navigate, useRoutes } from 'react-router-dom';
 import React from 'react';
 
 import CommonRoutes, { commonMenus } from './common';
-import FromRoutes, { formMenus } from './form';
-import GameRoutes, { gameMenus } from './game';
+// import FromRoutes, { formMenus } from './form';
+// import GameRoutes, { gameMenus } from './game';
 import employeeRoutes, { employeeMenus } from './employee';
 
 import Login from '../pages/login';
@@ -22,7 +22,7 @@ const rootRouter = [
     path: '/',
     element: <Navigate to="/login" />,
   },
-].concat(employeeRoutes, CommonRoutes, FromRoutes, GameRoutes);
+].concat(employeeRoutes, CommonRoutes);
 
 const Router = () => {
   const routes = useRoutes(rootRouter);
@@ -31,4 +31,4 @@ const Router = () => {
 
 export default Router;
 
-export const sidebarMenus = [...commonMenus, ...employeeMenus, ...formMenus, ...gameMenus];
+export const sidebarMenus = [...commonMenus, ...employeeMenus];

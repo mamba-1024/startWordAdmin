@@ -27,7 +27,7 @@ const Routes = [
         path: '/employee/detail',
         key: '/employee/detail',
         label: '员工详情',
-        hide: false,
+        hide: true,
         exact: true,
         element: LazyComp(ProForm),
         crumb: ['员工管理', '员工详情'], // 自定义面包屑

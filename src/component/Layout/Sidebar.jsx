@@ -42,17 +42,19 @@ export default () => {
     setOpenKeys(getOpenKeys(sidebarMenus, e.key));
   };
 
+  console.log(sidebarMenus);
+
   return (
     <Sider
       collapsible
       collapsed={collapsed}
-      onCollapse={value => toggleCollapsed(value)}
+      onCollapse={(value) => toggleCollapsed(value)}
       className={`site-layout-sider ${fixedSidebar ? 'site-layout-sider-fixed' : ''}`}
       theme={theme}
     >
       <div className="logo-wrap">
         <img src={logo} className="app-logo" alt="logo" />
-        {!collapsed && <div className={`logo-title logo-title-${theme}`}>React App</div>}
+        {!collapsed && <div className={`logo-title logo-title-${theme}`}>管理系统</div>}
       </div>
       <Menu
         defaultSelectedKeys={[getKeyByPath(sidebarMenus, location.pathname)]}
@@ -61,7 +63,7 @@ export default () => {
         items={sidebarMenus}
         onSelect={onSelect}
         theme={theme}
-        onOpenChange={keys => setOpenKeys(keys)}
+        onOpenChange={(keys) => setOpenKeys(keys)}
       />
     </Sider>
   );

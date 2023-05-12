@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout, Dropdown, Space, notification } from 'antd';
 import {
-  TranslationOutlined,
+  // TranslationOutlined,
   UserOutlined,
   SettingOutlined,
   LogoutOutlined,
@@ -10,7 +10,7 @@ import {
 } from '@ant-design/icons';
 import i18n from 'i18next';
 import { ThemeContext } from '../../context';
-import { LocaleContext } from '../../context/locale';
+// import { LocaleContext } from '../../context/locale';
 
 const { Header } = Layout;
 
@@ -18,14 +18,14 @@ const userName = 'admin';
 export default () => {
   const { collapsed, fixedHeader, themeVisible, toggleThemeVisible } =
     React.useContext(ThemeContext);
-  const { locale, toggleLocale } = React.useContext(LocaleContext);
+  // const { locale, toggleLocale } = React.useContext(LocaleContext);
   const navigate = useNavigate();
 
-  // 修改语言
-  const handleChangeLocale = ({ key }) => {
-    toggleLocale(key);
-    i18n.changeLanguage(key);
-  };
+  // // 修改语言
+  // const handleChangeLocale = ({ key }) => {
+  //   toggleLocale(key);
+  //   i18n.changeLanguage(key);
+  // };
 
   const handleUserMenus = ({ key }) => {
     if (key === 'login') {
@@ -56,10 +56,10 @@ export default () => {
     { key: 'login', icon: <LogoutOutlined />, label: i18n.t('layout.logout', '退出登录') },
   ];
 
-  const locales = [
-    { label: i18n.t('language.chinese', '中文'), key: 'zh-CN' },
-    { label: i18n.t('language.english', '英文'), key: 'en-US' },
-  ];
+  // const locales = [
+  //   { label: i18n.t('language.chinese', '中文'), key: 'zh-CN' },
+  //   { label: i18n.t('language.english', '英文'), key: 'en-US' },
+  // ];
 
   const showDrawer = () => {
     toggleThemeVisible(!themeVisible);
@@ -90,7 +90,7 @@ export default () => {
             {userName}
           </div>
         </Dropdown>
-        <Dropdown
+        {/* <Dropdown
           menu={{
             items: locales,
             selectable: true,
@@ -102,7 +102,7 @@ export default () => {
           <span className="site-item">
             <TranslationOutlined style={{ fontSize: 18 }} />
           </span>
-        </Dropdown>
+        </Dropdown> */}
         <div className="drawer-handle" onClick={showDrawer}>
           {themeVisible ? (
             <SkinOutlined
