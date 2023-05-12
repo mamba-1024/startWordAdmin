@@ -1,10 +1,13 @@
 .login-container {
   height: 100%;
   background-color: #f0f2f5;
+  background-image: url('https://gw.alipayobjects.com/zos/rmsportal/TVYTbAXWheQpRcWDaDMu.svg');
+  // background-image: url('https://mdn.alipayobjects.com/yuyan_qk0oxh/afts/img/V-_oS6r-i7wAAAAAAAAAAAAAFl94AQBr');
+  background-size: 100% 100%;
 }
 
 .ant-form.login-form {
-  max-width: 300px;
+  max-width: 320px;
   margin: 0 auto;
 }
 
@@ -18,4 +21,80 @@
 
 .login-form-button {
   width: 100%;
+}
+
+.background {
+  position: fixed;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.square1 {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f05;
+  animation: square1 5s ease-in-out infinite;
+}
+
+.square2 {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #00d8ff;
+  animation: square2 5s ease-in-out infinite;
+}
+
+.square3 {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fa0;
+  animation: square3 5s ease-in-out infinite;
+}
+
+@keyframes square1 {
+  0% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes square2 {
+  0% {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+}
+
+@keyframes square3 {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.5);
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
 }

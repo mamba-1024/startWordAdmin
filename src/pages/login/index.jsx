@@ -14,7 +14,8 @@ function App() {
     setLoading(true);
 
     request({
-      url: '/api/login',
+      // url: '/api/login',
+      url: '/backend/login/login',
       method: 'post',
       data: values,
     })
@@ -33,10 +34,10 @@ function App() {
   };
 
   return (
-    <div className="login-container h-screen pt-16">
+    <div className="login-container h-screen pt-28">
       <Form
         name="normal_login"
-        className="login-form bg-white p-12 rounded-md"
+        className="login-form bg-white py-12 rounded-md mx-auto px-8 shadow-md"
         initialValues={{
           remember: true,
         }}
@@ -85,7 +86,6 @@ function App() {
           <Button loading={loading} type="primary" htmlType="submit" className="login-form-button">
             {t('login.confirm')}
           </Button>
-          Or <a href=" ">register now!</a>
         </Form.Item>
       </Form>
     </div>

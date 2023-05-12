@@ -4,6 +4,7 @@ import React from 'react';
 import CommonRoutes, { commonMenus } from './common';
 import FromRoutes, { formMenus } from './form';
 import GameRoutes, { gameMenus } from './game';
+import employeeRoutes, { employeeMenus } from './employee';
 
 import Login from '../pages/login';
 import ErrorPage from '../pages/404';
@@ -21,7 +22,7 @@ const rootRouter = [
     path: '/',
     element: <Navigate to="/login" />,
   },
-].concat(CommonRoutes, FromRoutes, GameRoutes);
+].concat(employeeRoutes, CommonRoutes, FromRoutes, GameRoutes);
 
 const Router = () => {
   const routes = useRoutes(rootRouter);
@@ -30,4 +31,4 @@ const Router = () => {
 
 export default Router;
 
-export const sidebarMenus = [...commonMenus, ...formMenus, ...gameMenus];
+export const sidebarMenus = [...commonMenus, ...employeeMenus, ...formMenus, ...gameMenus];

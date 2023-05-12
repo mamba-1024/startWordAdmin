@@ -47,6 +47,7 @@ export default defineConfig({
           __dirname,
           '../../packages/react-router-dom/index.tsx',
         ),
+        '@/utils': resolve(__dirname, '/src/utils'),
       },
     }
     : {},
