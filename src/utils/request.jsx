@@ -4,10 +4,14 @@ import { getToken } from './token';
 
 // const requestHost = 'https://www.fastmock.site/mock/750e52b38d306262a62ff61d1858d451/kt';
 
-// const requestHost = 'https://hznanf.com';
+const requestHost = 'https://hznanf.com';
 // const requestHost = 'http://112.124.2.130:8088';
 
-// axios.defaults.baseURL = requestHost;
+if (process.env.NODE_ENV === 'production') {
+  console.log('NODE_ENV: production');
+  axios.defaults.baseURL = requestHost;
+}
+
 axios.defaults.timeout = 30000;
 axios.defaults.headers.common.Accept = '*/*';
 axios.defaults.headers.common['Content-Type'] = 'application/json';
