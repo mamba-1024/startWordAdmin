@@ -1,6 +1,5 @@
 import { request } from '../../utils/request';
 
-
 export async function requestFun(query) {
   const res = await request({
     url: '/backend/employee/listIncumbency',
@@ -14,7 +13,7 @@ export async function requestFun(query) {
   };
 }
 
-// 启用
+// 停用
 export async function disableApi(query) {
   return await request({
     url: `/backend/employee/disable/${query.id}`,
@@ -22,17 +21,28 @@ export async function disableApi(query) {
   });
 }
 
+// 启用
 export async function enableApi(query) {
   return await request({
     url: `/backend/employee/enable/${query.id}`,
     method: 'post',
+    data: query,
   });
 }
 
-
+// 详情
 export async function detailApi(query) {
   return await request({
     url: `/backend/employee/detail/${query.id}`,
+    method: 'post',
+    data: query,
+  });
+}
+
+// 积分清零 /backend/employee/clearPoints/{id}
+export async function clearPointsApi(query) {
+  return await request({
+    url: `/backend/employee/clearPoints/${query.id}`,
     method: 'post',
     data: query,
   });

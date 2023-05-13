@@ -1,8 +1,8 @@
 // import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-components';
 import { useRef } from 'react';
-import { requestFun, enableApi, disableApi } from '../sever';
-import { message } from 'antd';
+import { requestFun, enableApi, disableApi, clearPointsApi } from '../sever';
+import { message, Popconfirm } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 
@@ -101,6 +101,30 @@ export default () => {
         >
           查看
         </a>,
+        <Popconfirm
+          title="积分清零？"
+          description="确定要积分清零吗？"
+          onConfirm={() => {
+            clearPointsApi({ id: record.id }).then((res) => {
+              if (res) {
+                message.success('积分清零成功', 1, () => {
+                  action.reload();
+                });
+              } else {
+                message.error(res.msg);
+              }
+            });
+          }}
+          okText="确定"
+          cancelText="取消"
+        >
+          <a
+            rel="noopener noreferrer"
+            key="view"
+          >
+            积分清零
+          </a>
+        </Popconfirm>,
       ],
     },
   ];
