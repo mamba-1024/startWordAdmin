@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Checkbox, Form, Input, message } from 'antd';
+import { Button, Form, Input, message } from 'antd';
 import './index.less';
 import { useTranslation } from 'react-i18next';
 import { request } from '../../utils/request';
+import { getToken } from '../../utils/token';
 
 function App() {
   const { t } = useTranslation();
@@ -14,19 +15,15 @@ function App() {
     setLoading(true);
 
     request({
-      // url: '/api/login',
       url: '/backend/login/login',
       method: 'post',
       data: values,
     })
       .then((res) => {
-        if (res.verifySuccess) {
-          message.success('登录成功', 0.5, () => {
-            navigate('/dashboard');
-          });
-        } else {
-          message.error('用户名或密码错误');
-        }
+        getToken(res);
+        message.success('登录成功', 1, () => {
+          navigate('/dashboard');
+        });
       })
       .finally(() => {
         setLoading(false);
@@ -44,7 +41,7 @@ function App() {
         onFinish={onFinish}
       >
         <Form.Item
-          name="username"
+          name="name"
           rules={[
             {
               required: true,
@@ -69,18 +66,14 @@ function App() {
           <Input
             prefix={<LockOutlined className="site-form-item-icon" />}
             type="password"
-            placeholder="密码 123456"
+            placeholder="密码"
           />
         </Form.Item>
-        <Form.Item>
-          <Form.Item name="remember" valuePropName="checked" noStyle>
-            <Checkbox>Remember me</Checkbox>
-          </Form.Item>
-
+        {/* <Form.Item>
           <a className="login-form-forgot" href=" ">
             {t('login.forgotPassword')}
           </a>
-        </Form.Item>
+        </Form.Item> */}
 
         <Form.Item>
           <Button loading={loading} type="primary" htmlType="submit" className="login-form-button">

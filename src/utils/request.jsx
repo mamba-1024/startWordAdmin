@@ -1,5 +1,6 @@
 import { message } from 'antd';
 import axios from 'axios';
+import { getToken } from './token';
 
 // const requestHost = 'https://www.fastmock.site/mock/750e52b38d306262a62ff61d1858d451/kt';
 
@@ -7,11 +8,10 @@ import axios from 'axios';
 // const requestHost = 'http://112.124.2.130:8088';
 
 // axios.defaults.baseURL = requestHost;
-axios.defaults.timeout = 10000;
+axios.defaults.timeout = 30000;
 axios.defaults.headers.common.Accept = '*/*';
 axios.defaults.headers.common['Content-Type'] = 'application/json';
-axios.defaults.headers.common.Authorization =
-  'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJkcTBsdHRqMWlnemkiLCJpYXQiOjE2ODM0Njg4OTMsImV4cCI6MTY4NDMzMjg5M30.YIrC0VYO5Fgg0ygkJcYxJ8Xfc1eDqlX7EPOoXXvmB2A';
+axios.defaults.headers.common.Authorization = getToken();
 // axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 function fetch({ url, method, data, headers }) {

@@ -3,8 +3,10 @@ import { FormOutlined } from '@ant-design/icons';
 import { LazyComp, transformRouterSidebar } from './help';
 import Layout from '../component/Layout';
 
-const BasicForm = React.lazy(() => import('../pages/employee/on-job'));
-const ProForm = React.lazy(() => import('../pages/employee/detail'));
+const OnJob = React.lazy(() => import('../pages/employee/on-job'));
+const Detail = React.lazy(() => import('../pages/employee/detail'));
+const JobAudit = React.lazy(() => import('../pages/employee/jobAudit'));
+
 
 const Routes = [
   {
@@ -20,7 +22,7 @@ const Routes = [
         label: '在职管理',
         hide: false,
         exact: true,
-        element: LazyComp(BasicForm),
+        element: LazyComp(OnJob),
         crumb: ['员工管理', '在职管理'], // 自定义面包屑
       },
       {
@@ -29,8 +31,17 @@ const Routes = [
         label: '员工详情',
         hide: true,
         exact: true,
-        element: LazyComp(ProForm),
+        element: LazyComp(Detail),
         crumb: ['员工管理', '员工详情'], // 自定义面包屑
+      },
+      {
+        path: '/employee/jobAudit',
+        key: '/employee/jobAudit',
+        label: '入职审核',
+        hide: false,
+        exact: true,
+        element: LazyComp(JobAudit),
+        crumb: ['员工管理', '入职审核'], // 自定义面包屑
       },
     ],
   },
