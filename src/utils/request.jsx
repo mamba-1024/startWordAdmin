@@ -56,5 +56,6 @@ export async function request({ url, method, data, headers }) {
       return Promise.reject(error.response);
     }
     message.error(error.response.message);
+    return Promise.reject(error.response);
   }
 }
