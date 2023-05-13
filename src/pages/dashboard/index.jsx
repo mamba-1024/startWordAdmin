@@ -3,7 +3,6 @@ import { Card, Row, Col } from 'antd';
 import { PageHeader } from '@ant-design/pro-layout';
 import { Gauge, Liquid, Column } from '@ant-design/plots';
 import DemoLine from './Line';
-import DemoChoroplethMap from './ChoroplethMap';
 
 export default function Dashboard() {
   const ticks = [0, 1 / 3, 2 / 3, 1];
@@ -66,7 +65,7 @@ export default function Dashboard() {
           fontSize: '12px',
           color: '#4B535E',
         },
-        formatter: () => '系统表现',
+        formatter: () => '表现',
       },
     },
     onReady: (plot) => {
@@ -75,7 +74,7 @@ export default function Dashboard() {
   };
 
   const LiquidConfig = {
-    percent: 0.25,
+    percent: 0.75,
     outline: {
       border: 4,
       distance: 8,
@@ -87,37 +86,26 @@ export default function Dashboard() {
 
   const data = [
     {
-      type: '家具家电',
-      sales: 38,
+      type: '新人',
+      sales: 36,
     },
     {
-      type: '粮油副食',
+      type: '加班',
       sales: 52,
     },
     {
-      type: '生鲜水果',
-      sales: 61,
+      type: '早班',
+      sales: 75,
     },
     {
-      type: '美容洗护',
+      type: '员工总数',
       sales: 145,
     },
     {
-      type: '母婴用品',
-      sales: 48,
+      type: '晚班',
+      sales: 70,
     },
-    {
-      type: '进口食品',
-      sales: 38,
-    },
-    {
-      type: '食品饮料',
-      sales: 38,
-    },
-    {
-      type: '家庭清洁',
-      sales: 38,
-    },
+
   ];
   const ColumnConfig = {
     data,
@@ -162,21 +150,21 @@ export default function Dashboard() {
           </Card>
         </Col>
         <Col span={8}>
-          <Card title="进度" bordered={false}>
+          <Card title="项目进度" bordered={false}>
             <div style={{ width: '100%', height: 180 }}>
               <Liquid {...LiquidConfig} />
             </div>
           </Card>
         </Col>
         <Col span={8}>
-          <Card title="分类条目" bordered={false}>
+          <Card title="统计情况" bordered={false}>
             <div style={{ width: '100%', height: 180 }}>
               <Column {...ColumnConfig} />
             </div>
           </Card>
         </Col>
       </Row>
-      <Row style={{ marginTop: 24 }}>
+      {/* <Row style={{ marginTop: 24 }}>
         <Col span={24}>
           <Card title="中国地图" bordered={false}>
             <div style={{ height: 500 }}>
@@ -184,7 +172,7 @@ export default function Dashboard() {
             </div>
           </Card>
         </Col>
-      </Row>
+      </Row> */}
       <Row style={{ marginTop: 24 }}>
         <Col span={24}>
           <Card title="折线图" bordered={false}>

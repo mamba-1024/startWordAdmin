@@ -13,3 +13,13 @@ export async function attendanceListApi(query) {
     success: true,
   };
 }
+
+// 导出记录
+export async function exportApi(query) {
+  const res = await request({
+    url: '/backend/attendance/export',
+    method: 'post',
+    data: query,
+  });
+  return res;
+}

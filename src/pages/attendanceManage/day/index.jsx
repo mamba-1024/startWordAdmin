@@ -1,13 +1,14 @@
-// import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
+import { ExportOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-components';
 import { useRef } from 'react';
 import { attendanceListApi } from '../sever';
 import dayjs from 'dayjs';
+import { Button } from 'antd';
 // import { useNavigate } from 'react-router-dom';
-
 
 export default () => {
   const actionRef = useRef();
+  const filterRef = useRef();
   // const navigate = useNavigate();
 
   const columns = [
@@ -59,7 +60,9 @@ export default () => {
           dataIndex: 'commonRecord1',
           search: false,
           render: (_, record) => {
-            return record.commonRecord ? `${record.commonRecord?.punchUpTime?.hours}:${record.commonRecord?.punchUpTime?.minutes}:${record.commonRecord?.punchUpTime?.seconds}` : '-';
+            return record.commonRecord
+              ? `${record.commonRecord?.punchUpTime?.hours}:${record.commonRecord?.punchUpTime?.minutes}:${record.commonRecord?.punchUpTime?.seconds}`
+              : '-';
           },
         },
         {
@@ -67,7 +70,9 @@ export default () => {
           dataIndex: 'overRecord2',
           search: false,
           render: (_, record) => {
-            return record.overRecord ? `${record.overRecord?.punchUpTime?.hours}:${record.overRecord?.punchUpTime?.minutes}:${record.overRecord?.punchUpTime?.seconds}` : '-';
+            return record.overRecord
+              ? `${record.overRecord?.punchUpTime?.hours}:${record.overRecord?.punchUpTime?.minutes}:${record.overRecord?.punchUpTime?.seconds}`
+              : '-';
           },
         },
       ],
@@ -81,7 +86,9 @@ export default () => {
           dataIndex: 'commonRecord',
           search: false,
           render: (_, record) => {
-            return record.commonRecord ? `${record.commonRecord?.punchDownTime?.hours}:${record.commonRecord?.punchDownTime?.minutes}:${record.commonRecord?.punchDownTime?.seconds}` : '-';
+            return record.commonRecord
+              ? `${record.commonRecord?.punchDownTime?.hours}:${record.commonRecord?.punchDownTime?.minutes}:${record.commonRecord?.punchDownTime?.seconds}`
+              : '-';
           },
         },
         {
@@ -89,7 +96,9 @@ export default () => {
           dataIndex: 'overRecord',
           search: false,
           render: (_, record) => {
-            return record.overRecord ? `${record.overRecord?.punchDownTime?.hours}:${record.overRecord?.punchDownTime?.minutes}:${record.overRecord?.punchDownTime?.seconds}` : '-';
+            return record.overRecord
+              ? `${record.overRecord?.punchDownTime?.hours}:${record.overRecord?.punchDownTime?.minutes}:${record.overRecord?.punchDownTime?.seconds}`
+              : '-';
           },
         },
       ],
@@ -111,12 +120,11 @@ export default () => {
         return record.overRecord?.hours || '-';
       },
     },
-
-
   ];
 
   return (
     <ProTable
+      rowKey={(record, index) => index}
       columns={columns}
       actionRef={actionRef}
       cardBordered
@@ -127,7 +135,6 @@ export default () => {
           ...params,
         });
       }}
-      rowKey="id"
       search={{
         labelWidth: 'auto',
       }}
@@ -148,11 +155,27 @@ export default () => {
           return values;
         },
       }}
+      formRef={filterRef}
       pagination={{
         pageSize: 10,
         onChange: (page) => console.log(page),
       }}
       dateFormatter="string"
+      toolBarRender={() => [
+        <Button
+          key="button"
+          icon={<ExportOutlined />}
+          onClick={async () => {
+            // await exportApi(filterRef.current.getFieldsFormatValue());
+            const params = filterRef.current.getFieldsFormatValue();
+            const str = Object.keys(params).map((key) => `${key}=${params[key]}`).join('&');
+            window.open(`${window.location.origin}/backend/attendance/export?${str}`);
+          }}
+          type="primary"
+        >
+          导出
+        </Button>,
+      ]}
     />
   );
 };

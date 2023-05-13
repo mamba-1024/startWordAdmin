@@ -1,11 +1,10 @@
-// import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
+import { ExportOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-components';
 import { useRef, useState } from 'react';
 import { listAuditApi, auditPassApi, auditRefuseApi } from '../sever';
-import { message, Modal, Input, Form } from 'antd';
+import { message, Modal, Input, Form, Table, Space, Button } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
-import { set } from 'lodash';
 
 const { TextArea } = Input;
 
@@ -127,6 +126,38 @@ export default () => {
   return (
     <>
       <ProTable
+        rowSelection={{
+        // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
+        // 注释该行则默认不显示下拉选项
+          selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
+          defaultSelectedRowKeys: [],
+        }}
+        tableAlertRender={({
+          selectedRowKeys,
+          selectedRows,
+          onCleanSelected,
+        }) => {
+          console.log(selectedRowKeys, selectedRows);
+          return (
+            <Space size={24}>
+              <span>
+                已选 {selectedRowKeys.length} 项
+                <a style={{ marginInlineStart: 8 }} onClick={onCleanSelected}>
+                  取消选择
+                </a>
+              </span>
+            </Space>
+          );
+        }}
+        tableAlertOptionRender={() => {
+          return (
+            <Space size={16}>
+              <Button type="primary" ghost>批量审核通过</Button>
+              <Button type="primary" ghost>批量审核不通过</Button>
+              {/* <Button type="primary" ghost>导出数据</Button> */}
+            </Space>
+          );
+        }}
         columns={columns}
         actionRef={actionRef}
         cardBordered
@@ -140,6 +171,7 @@ export default () => {
         rowKey="id"
         search={{
           labelWidth: 'auto',
+          defaultCollapsed: false,
         }}
         options={{
           setting: {
@@ -163,6 +195,20 @@ export default () => {
           onChange: (page) => console.log(page),
         }}
         dateFormatter="string"
+        toolBarRender={() => [
+          <Button
+            key="button"
+            icon={<ExportOutlined />}
+            onClick={async () => {
+            // const params = filterRef.current.getFieldsFormatValue();
+            // const str = Object.keys(params).map((key) => `${key}=${params[key]}`).join('&');
+            // window.open(`${window.location.origin}/backend/attendance/export?${str}`);
+            }}
+            type="primary"
+          >
+            导出
+          </Button>,
+        ]}
       />
       <Modal
         title="审核拒绝"

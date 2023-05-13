@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Image } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { sidebarMenus, sidebarMenusAll } from '../../routes';
-import logo from '../../logo.svg';
+import logo from '../../public/logo.png';
 import { ThemeContext } from '../../context';
 
 const { Sider } = Layout;
@@ -41,7 +41,6 @@ export default () => {
     setOpenKeys(getOpenKeys(sidebarMenusAll, e.key));
   };
 
-
   return (
     <Sider
       collapsible
@@ -50,9 +49,13 @@ export default () => {
       className={`site-layout-sider ${fixedSidebar ? 'site-layout-sider-fixed' : ''}`}
       theme={theme}
     >
-      <div className="logo-wrap">
-        <img src={logo} className="app-logo" alt="logo" />
-        {!collapsed && <div className={`logo-title logo-title-${theme}`}>管理系统</div>}
+      <div className="logo-wrap justify-center">
+        {/* <img src={logo} className="app-logo" alt="logo" /> */}
+        {!collapsed && (
+          <div className={`logo-title logo-title-${theme}`}>
+            <Image src={logo} height={60} alt="logo" preview={false} />
+          </div>
+        )}
       </div>
       <Menu
         defaultSelectedKeys={[getKeyByPath(sidebarMenusAll, location.pathname)]}

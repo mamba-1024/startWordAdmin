@@ -1,8 +1,8 @@
-// import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
+import { ExportOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-components';
 import { useRef } from 'react';
 import { requestFun, enableApi, disableApi, clearPointsApi } from '../sever';
-import { message, Popconfirm } from 'antd';
+import { message, Popconfirm, Table, Space, Button } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 
@@ -29,6 +29,21 @@ export default () => {
     {
       title: ' 等级',
       dataIndex: 'level',
+      valueType: 'select',
+      valueEnum: {
+        0: {
+          text: '0',
+        },
+        1: {
+          text: '1',
+        },
+        2: {
+          text: '2',
+        },
+        3: {
+          text: '3',
+        },
+      },
     },
     {
       title: '积分',
@@ -36,20 +51,20 @@ export default () => {
       search: false,
     },
     {
-      title: '累计工时',
+      title: '当月累计工时',
       dataIndex: 'totalWorkTime',
       search: false,
     },
     {
-      title: '在职状态',
+      title: '启用状态',
       dataIndex: 'onBoard',
       valueType: 'select',
       valueEnum: {
         true: {
-          text: '在职',
+          text: '启用',
         },
         false: {
-          text: '离职',
+          text: '停用',
         },
       },
     },
@@ -131,6 +146,42 @@ export default () => {
 
   return (
     <ProTable
+      rowSelection={{
+        // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
+        // 注释该行则默认不显示下拉选项
+        selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
+        defaultSelectedRowKeys: [],
+      }}
+      tableAlertRender={({
+        selectedRowKeys,
+        selectedRows,
+        onCleanSelected,
+      }) => {
+        console.log(selectedRowKeys, selectedRows);
+        return (
+          <Space size={24}>
+            <span>
+              已选 {selectedRowKeys.length} 项
+              <a style={{ marginInlineStart: 8 }} onClick={onCleanSelected}>
+                取消选择
+              </a>
+            </span>
+          </Space>
+        );
+      }}
+      tableAlertOptionRender={() => {
+        return (
+          <Space size={16}>
+            <Button type="primary" ghost>批量启用</Button>
+            <Button type="primary" ghost>批量停用</Button>
+            {/* <Button type="primary" ghost>导出数据</Button> */}
+          </Space>
+        );
+      }}
+      search={{
+        defaultCollapsed: false,
+        labelWidth: 'auto',
+      }}
       columns={columns}
       actionRef={actionRef}
       cardBordered
@@ -142,9 +193,6 @@ export default () => {
         });
       }}
       rowKey="id"
-      search={{
-        labelWidth: 'auto',
-      }}
       options={{
         setting: {
           listsHeight: 400,
@@ -167,6 +215,20 @@ export default () => {
         onChange: (page) => console.log(page),
       }}
       dateFormatter="string"
+      toolBarRender={() => [
+        <Button
+          key="button"
+          icon={<ExportOutlined />}
+          onClick={async () => {
+            // const params = filterRef.current.getFieldsFormatValue();
+            // const str = Object.keys(params).map((key) => `${key}=${params[key]}`).join('&');
+            // window.open(`${window.location.origin}/backend/attendance/export?${str}`);
+          }}
+          type="primary"
+        >
+          导出
+        </Button>,
+      ]}
     />
   );
 };

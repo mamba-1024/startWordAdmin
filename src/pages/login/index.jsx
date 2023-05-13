@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Form, Input, message } from 'antd';
+import { Image, message } from 'antd';
 import './index.less';
-import { useTranslation } from 'react-i18next';
 import { request } from '../../utils/request';
 import { saveToken } from '../../utils/token';
+import {
+  LoginForm,
+  ProFormText,
+} from '@ant-design/pro-components';
+import logo from '../../public/logo.png';
 
 function App() {
-  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const onFinish = (values) => {
@@ -31,8 +34,44 @@ function App() {
   };
 
   return (
-    <div className="login-container h-screen pt-28">
-      <Form
+    <div className="login-container h-screen bg-white pt-10">
+      <LoginForm
+        logo={<Image src={logo} width={100} preview={false} />}
+        title={<div className="text-transparent text-2xl">后台</div>}
+        subTitle={<div className="font-bold text-xl">杭州南方化工设备有限公司</div>}
+        onFinish={onFinish}
+        loading={loading}
+      >
+        <ProFormText
+          name="name"
+          fieldProps={{
+            size: 'large',
+            prefix: <UserOutlined className={'prefixIcon'} />,
+          }}
+          placeholder={'用户名: admin'}
+          rules={[
+            {
+              required: true,
+              message: '请输入用户名!',
+            },
+          ]}
+        />
+        <ProFormText.Password
+          name="password"
+          fieldProps={{
+            size: 'large',
+            prefix: <LockOutlined className={'prefixIcon'} />,
+          }}
+          placeholder={'密码: '}
+          rules={[
+            {
+              required: true,
+              message: '请输入密码！',
+            },
+          ]}
+        />
+      </LoginForm>
+      {/* <Form
         name="normal_login"
         className="login-form bg-white py-12 rounded-md mx-auto px-8 shadow-md"
         initialValues={{
@@ -69,18 +108,13 @@ function App() {
             placeholder="密码"
           />
         </Form.Item>
-        {/* <Form.Item>
-          <a className="login-form-forgot" href=" ">
-            {t('login.forgotPassword')}
-          </a>
-        </Form.Item> */}
 
         <Form.Item>
           <Button loading={loading} type="primary" htmlType="submit" className="login-form-button">
             {t('login.confirm')}
           </Button>
         </Form.Item>
-      </Form>
+      </Form> */}
     </div>
   );
 }

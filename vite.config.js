@@ -7,6 +7,11 @@ import { resolve } from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  output: {
+    manualChunks: {
+      lodash: ['lodash'],
+    },
+  },
   server: {
     host: '127.0.0.1', // vite默认值
     port: 5173, // vite默认值

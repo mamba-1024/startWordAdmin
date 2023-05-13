@@ -11,14 +11,14 @@ export default () => {
 
   useEffect(() => {
     const id = searchParams.get('id');
-    if (id) {
-      detailApi({ id }).then((res) => {
-        setDetail(res);
-        console.log('detail: ', res);
-      });
-    }
+    // if (id) {
+    //   detailApi({ id }).then((res) => {
+    //     setDetail(res);
+    //     console.log('detail: ', res);
+    //   });
+    // }
   }, [searchParams]);
 
   const actionRef = useRef();
-  return <div>{detail ? '' : '暂无数据'}</div>;
+  return <div className="text-center pt-10">{detail ? '' : '暂无数据，后续开发'}</div>;
 };
