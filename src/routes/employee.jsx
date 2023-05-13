@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormOutlined } from '@ant-design/icons';
-import { LazyComp, transformRouterSidebar } from './help';
+import { LazyComp, transformRouterSidebar, transformRouterSidebarAll } from './help';
 import Layout from '../component/Layout';
 
 const OnJob = React.lazy(() => import('../pages/employee/on-job'));
@@ -48,5 +48,6 @@ const Routes = [
 ];
 
 export const employeeMenus = transformRouterSidebar(Routes);
+export const employeeMenusAll = transformRouterSidebarAll(Routes);
 
 export default Routes;

@@ -1,6 +1,6 @@
 import React from 'react';
-import { FormOutlined } from '@ant-design/icons';
-import { LazyComp, transformRouterSidebar } from './help';
+import { CalendarOutlined } from '@ant-design/icons';
+import { LazyComp, transformRouterSidebar, transformRouterSidebarAll } from './help';
 import Layout from '../component/Layout';
 
 const Day = React.lazy(() => import('../pages/attendanceManage/day'));
@@ -9,7 +9,7 @@ const Routes = [
   {
     label: '考勤管理',
     hide: false,
-    icon: <FormOutlined />,
+    icon: <CalendarOutlined />,
     key: 'attendanceManage',
     element: <Layout />,
     children: [
@@ -27,5 +27,6 @@ const Routes = [
 ];
 
 export const attendanceManageMenus = transformRouterSidebar(Routes);
+export const attendanceManageMenusAll = transformRouterSidebarAll(Routes);
 
 export default Routes;

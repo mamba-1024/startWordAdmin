@@ -3,7 +3,7 @@ import {
   DashboardOutlined,
   //  HeartOutlined
 } from '@ant-design/icons';
-import { LazyComp, transformRouterSidebar } from './help';
+import { LazyComp, transformRouterSidebar, transformRouterSidebarAll } from './help';
 import Layout from '../component/Layout';
 
 const Dashboard = React.lazy(() => import('../pages/dashboard'));
@@ -47,5 +47,6 @@ const Routes = [
 ];
 
 export const commonMenus = transformRouterSidebar(Routes[0].children);
+export const commonMenusAll = transformRouterSidebarAll(Routes[0].children);
 
 export default Routes;

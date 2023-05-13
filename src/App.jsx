@@ -17,7 +17,7 @@ function App() {
       locale: language,
       toggleLocale: setLanguage,
     }),
-    [language]
+    [language],
   );
   return (
     <LocaleContext.Provider value={store}>

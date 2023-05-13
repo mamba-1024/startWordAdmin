@@ -5,7 +5,7 @@ import { Button, Form, Input, message } from 'antd';
 import './index.less';
 import { useTranslation } from 'react-i18next';
 import { request } from '../../utils/request';
-import { getToken } from '../../utils/token';
+import { saveToken } from '../../utils/token';
 
 function App() {
   const { t } = useTranslation();
@@ -20,7 +20,7 @@ function App() {
       data: values,
     })
       .then((res) => {
-        getToken(res);
+        saveToken(res);
         message.success('登录成功', 1, () => {
           navigate('/dashboard');
         });

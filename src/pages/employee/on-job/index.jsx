@@ -1,107 +1,121 @@
 // import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-components';
 import { useRef } from 'react';
-import { request } from '../../../utils/request';
+import { requestFun, enableApi, disableApi } from '../sever';
+import { message } from 'antd';
+import dayjs from 'dayjs';
+import { useNavigate } from 'react-router-dom';
 
-export const waitTimePromise = async (time = 100) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
-};
-
-export const waitTime = async (time = 100) => {
-  await waitTimePromise(time);
-};
-
-const columns = [
-  {
-    dataIndex: 'id',
-    width: 48,
-    valueType: 'indexBorder',
-    search: false,
-  },
-  {
-    title: '姓名',
-    dataIndex: 'name',
-  },
-  {
-    title: '手机号',
-    dataIndex: 'phone',
-  },
-  {
-    title: ' 等级',
-    dataIndex: 'level',
-  },
-  {
-    title: '积分',
-    dataIndex: 'points',
-    search: false,
-  },
-  {
-    title: '累计工时',
-    dataIndex: 'totalWorkTime',
-    search: false,
-  },
-  {
-    title: '员工状态',
-    dataIndex: 'status',
-    valueType: 'select',
-    valueEnum: {
-      open: {
-        text: '在职',
-        status: 'Error',
-      },
-      closed: {
-        text: '离职',
-        status: 'Success',
-      },
-    },
-  },
-  {
-    title: '入职时间',
-    dataIndex: 'created_at',
-    valueType: 'dateRange',
-  },
-  {
-    title: '操作',
-    valueType: 'option',
-    key: 'option',
-    render: (text, record, _, action) => [
-      <a
-        key="editable"
-        onClick={() => {
-          action?.startEditable?.(record.id);
-        }}
-      >
-        编辑
-      </a>,
-      <a href={record.url} target="_blank" rel="noopener noreferrer" key="view">
-        查看
-      </a>,
-    ],
-  },
-];
-
-async function requestFun(query) {
-  await request({
-    url: '/backend/employee/listIncumbency',
-    method: 'post',
-    data: query,
-  });
-}
 
 export default () => {
   const actionRef = useRef();
+  const navigate = useNavigate();
+
+  const columns = [
+    {
+      dataIndex: 'id',
+      width: 48,
+      valueType: 'index',
+      search: false,
+    },
+    {
+      title: '姓名',
+      dataIndex: 'name',
+    },
+    {
+      title: '手机号',
+      dataIndex: 'phone',
+    },
+    {
+      title: ' 等级',
+      dataIndex: 'level',
+    },
+    {
+      title: '积分',
+      dataIndex: 'points',
+      search: false,
+    },
+    {
+      title: '累计工时',
+      dataIndex: 'totalWorkTime',
+      search: false,
+    },
+    {
+      title: '在职状态',
+      dataIndex: 'onBoard',
+      valueType: 'select',
+      valueEnum: {
+        true: {
+          text: '在职',
+        },
+        false: {
+          text: '离职',
+        },
+      },
+    },
+    {
+      title: '入职时间',
+      dataIndex: 'onboardingDate',
+      valueType: 'dateRange',
+      search: {
+        transform: (value) => {
+          return {
+            incumbencyStart: value[0],
+            incumbencyEnd: value[1],
+          };
+        },
+      },
+      render: (_, record) => {
+        return record.onboardingDate ? dayjs(record.onboardingDate).format('YYYY-MM-DD') : '-';
+      },
+    },
+    {
+      title: '操作',
+      valueType: 'option',
+      key: 'option',
+      render: (text, record, _, action) => [
+        <a
+          key="editable"
+          onClick={async () => {
+            if (record.status) {
+              await disableApi({ id: record.id });
+              message.success('停用成功', 0.5, () => {
+                action.reload();
+              });
+            } else {
+              await enableApi({ id: record.id });
+              message.success('启用成功', 0.5, () => {
+                action.reload();
+              });
+            }
+          }}
+        >
+          {record.status ? '停用' : '启用'}
+        </a>,
+        <a
+          onClick={() => {
+            navigate(`/employee/detail?id=${record.id}`, { state: { id: record.id } });
+          }}
+          rel="noopener noreferrer"
+          key="view"
+        >
+          查看
+        </a>,
+      ],
+    },
+  ];
+
   return (
     <ProTable
       columns={columns}
       actionRef={actionRef}
       cardBordered
       request={async (params = {}, sort, filter) => {
-        console.log(sort, filter);
-        return await requestFun(params);
+        return requestFun({
+          page: params.current,
+          pageSize: params.pageSize,
+          ...params,
+        });
       }}
       rowKey="id"
       search={{

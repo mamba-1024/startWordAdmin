@@ -1,10 +1,10 @@
 import { Navigate, useRoutes } from 'react-router-dom';
 import React from 'react';
 
-import CommonRoutes, { commonMenus } from './common';
-import AttendanceManageRoutes, { attendanceManageMenus } from './attendanceManage';
-import InfoManageRoutes, { infoManageMenus } from './infoManage';
-import employeeRoutes, { employeeMenus } from './employee';
+import CommonRoutes, { commonMenus, commonMenusAll } from './common';
+import AttendanceManageRoutes, { attendanceManageMenus, attendanceManageMenusAll } from './attendanceManage';
+import InfoManageRoutes, { infoManageMenus, infoManageMenusAll } from './infoManage';
+import employeeRoutes, { employeeMenus, employeeMenusAll } from './employee';
 
 import Login from '../pages/login';
 import ErrorPage from '../pages/404';
@@ -36,4 +36,10 @@ export const sidebarMenus = [
   ...employeeMenus,
   ...attendanceManageMenus,
   ...infoManageMenus,
+];
+export const sidebarMenusAll = [
+  ...commonMenusAll,
+  ...employeeMenusAll,
+  ...attendanceManageMenusAll,
+  ...infoManageMenusAll,
 ];

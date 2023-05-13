@@ -4,7 +4,7 @@ import { getToken } from './token';
 
 // const requestHost = 'https://www.fastmock.site/mock/750e52b38d306262a62ff61d1858d451/kt';
 
-const requestHost = 'https://hznanf.com';
+const requestHost = 'http://hznanf.com';
 // const requestHost = 'http://112.124.2.130:8088';
 
 if (process.env.NODE_ENV === 'production') {
@@ -15,10 +15,12 @@ if (process.env.NODE_ENV === 'production') {
 axios.defaults.timeout = 30000;
 axios.defaults.headers.common.Accept = '*/*';
 axios.defaults.headers.common['Content-Type'] = 'application/json';
-axios.defaults.headers.common.Authorization = getToken();
 // axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 function fetch({ url, method, data, headers }) {
+  // 设置请求头
+  axios.defaults.headers.common.Authorization = getToken();
+
   switch (method) {
     case 'get':
       return axios.get(url, { params: data }, { headers });
@@ -34,11 +36,25 @@ function fetch({ url, method, data, headers }) {
 }
 
 export async function request({ url, method, data, headers }) {
-  const res = await fetch({ url, method, data, headers });
-
-  if (res.status === 200) {
-    return res.data.data;
+  try {
+    const res = await fetch({ url, method, data, headers });
+    console.log('request res: ', res);
+    if (res.status === 200) {
+      if (res.data.code === 200) {
+        return res.data.data;
+      }
+      message.error(res.data.message);
+      return Promise.reject(res.data);
+    }
+    message.error(res.statusText);
+    return Promise.reject(res.data);
+  } catch (error) {
+    if (error.response.status === 401) {
+      message.error('登录过期，请重新登录', 1, () => {
+        window.location.href = '/login';
+      });
+      return Promise.reject(error.response);
+    }
+    message.error(error.response.message);
   }
-  message.error(res.data.message);
-  return Promise.reject(res.data);
 }

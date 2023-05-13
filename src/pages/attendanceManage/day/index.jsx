@@ -1,107 +1,131 @@
 // import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-components';
 import { useRef } from 'react';
-import { request } from '../../../utils/request';
+import { attendanceListApi } from '../sever';
+import dayjs from 'dayjs';
+// import { useNavigate } from 'react-router-dom';
 
-export const waitTimePromise = async (time = 100) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
-};
-
-export const waitTime = async (time = 100) => {
-  await waitTimePromise(time);
-};
-
-const columns = [
-  {
-    dataIndex: 'id',
-    width: 48,
-    valueType: 'indexBorder',
-    search: false,
-  },
-  {
-    title: '姓名',
-    dataIndex: 'name',
-  },
-  {
-    title: '手机号',
-    dataIndex: 'phone',
-  },
-  {
-    title: ' 等级',
-    dataIndex: 'level',
-  },
-  {
-    title: '积分',
-    dataIndex: 'points',
-    search: false,
-  },
-  {
-    title: '累计工时',
-    dataIndex: 'totalWorkTime',
-    search: false,
-  },
-  {
-    title: '员工状态',
-    dataIndex: 'status',
-    valueType: 'select',
-    valueEnum: {
-      open: {
-        text: '在职',
-        status: 'Error',
-      },
-      closed: {
-        text: '离职',
-        status: 'Success',
-      },
-    },
-  },
-  {
-    title: '入职时间',
-    dataIndex: 'created_at',
-    valueType: 'dateRange',
-  },
-  {
-    title: '操作',
-    valueType: 'option',
-    key: 'option',
-    render: (text, record, _, action) => [
-      <a
-        key="editable"
-        onClick={() => {
-          action?.startEditable?.(record.id);
-        }}
-      >
-        编辑
-      </a>,
-      <a href={record.url} target="_blank" rel="noopener noreferrer" key="view">
-        查看
-      </a>,
-    ],
-  },
-];
-
-async function requestFun(query) {
-  await request({
-    url: '/backend/employee/listIncumbency',
-    method: 'post',
-    data: query,
-  });
-}
 
 export default () => {
   const actionRef = useRef();
+  // const navigate = useNavigate();
+
+  const columns = [
+    {
+      dataIndex: 'id',
+      width: 48,
+      valueType: 'index',
+      search: false,
+    },
+    {
+      title: '时间',
+      dataIndex: 'punchDate',
+      valueType: 'dateRange',
+      search: {
+        transform: (value) => {
+          return {
+            startTime: value[0],
+            endTime: value[1],
+          };
+        },
+      },
+      render: (_, record) => {
+        return record.punchDate ? dayjs(record.punchDate).format('YYYY-MM-DD') : '-';
+      },
+    },
+    {
+      title: '姓名',
+      dataIndex: 'name',
+    },
+    {
+      title: '员工状态',
+      dataIndex: 'onBoard',
+      search: false,
+      valueEnum: {
+        true: {
+          text: '在职',
+        },
+        false: {
+          text: '离职',
+        },
+      },
+    },
+    {
+      title: '上班时间',
+      search: false,
+      children: [
+        {
+          title: '班次1',
+          dataIndex: 'commonRecord1',
+          search: false,
+          render: (_, record) => {
+            return record.commonRecord ? `${record.commonRecord?.punchUpTime?.hours}:${record.commonRecord?.punchUpTime?.minutes}:${record.commonRecord?.punchUpTime?.seconds}` : '-';
+          },
+        },
+        {
+          title: '班次2',
+          dataIndex: 'overRecord2',
+          search: false,
+          render: (_, record) => {
+            return record.overRecord ? `${record.overRecord?.punchUpTime?.hours}:${record.overRecord?.punchUpTime?.minutes}:${record.overRecord?.punchUpTime?.seconds}` : '-';
+          },
+        },
+      ],
+    },
+    {
+      title: '上班时间',
+      search: false,
+      children: [
+        {
+          title: '班次1',
+          dataIndex: 'commonRecord',
+          search: false,
+          render: (_, record) => {
+            return record.commonRecord ? `${record.commonRecord?.punchDownTime?.hours}:${record.commonRecord?.punchDownTime?.minutes}:${record.commonRecord?.punchDownTime?.seconds}` : '-';
+          },
+        },
+        {
+          title: '班次2',
+          dataIndex: 'overRecord',
+          search: false,
+          render: (_, record) => {
+            return record.overRecord ? `${record.overRecord?.punchDownTime?.hours}:${record.overRecord?.punchDownTime?.minutes}:${record.overRecord?.punchDownTime?.seconds}` : '-';
+          },
+        },
+      ],
+    },
+    {
+      title: '班次1时长',
+      dataIndex: 'commonRecord11',
+      search: false,
+      render: (_, record) => {
+        return record.commonRecord?.hours || '-';
+      },
+    },
+
+    {
+      title: '班次2时长',
+      dataIndex: 'overRecord22',
+      search: false,
+      render: (_, record) => {
+        return record.overRecord?.hours || '-';
+      },
+    },
+
+
+  ];
+
   return (
     <ProTable
       columns={columns}
       actionRef={actionRef}
       cardBordered
       request={async (params = {}, sort, filter) => {
-        console.log(sort, filter);
-        return await requestFun(params);
+        return attendanceListApi({
+          page: params.current,
+          pageSize: params.pageSize,
+          ...params,
+        });
       }}
       rowKey="id"
       search={{

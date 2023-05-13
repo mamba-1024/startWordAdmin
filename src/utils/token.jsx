@@ -1,15 +1,15 @@
 
 // 保存token
 export function saveToken(token) {
-  localStorage.setItem('token', token);
+  localStorage.setItem('TOKEN', token);
 }
 
 // 获取token
 export function getToken() {
-  return localStorage.getItem('token');
+  return localStorage.getItem('TOKEN');
 }
 
 // 删除token
 export function removeToken() {
-  localStorage.removeItem('token');
+  localStorage.removeItem('TOKEN');
 }

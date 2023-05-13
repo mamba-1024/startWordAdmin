@@ -29,7 +29,24 @@ export function transformRouterSidebar(r) {
           item.key,
           item.icon,
           transformRouterSidebar(item.children),
-          item.crumb
+          item.crumb,
+        );
+      }
+      return getItem(item.label, item.key, item.icon, null, item.crumb);
+    });
+}
+
+// 获取全部的menu
+export function transformRouterSidebarAll(r) {
+  return r
+    .map((item) => {
+      if (item.children) {
+        return getItem(
+          item.label,
+          item.key,
+          item.icon,
+          transformRouterSidebarAll(item.children),
+          item.crumb,
         );
       }
       return getItem(item.label, item.key, item.icon, null, item.crumb);

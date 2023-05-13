@@ -11,6 +11,7 @@ import {
 import i18n from 'i18next';
 import { ThemeContext } from '../../context';
 // import { LocaleContext } from '../../context/locale';
+import { removeToken } from '../../utils/token';
 
 const { Header } = Layout;
 
@@ -29,6 +30,7 @@ export default () => {
 
   const handleUserMenus = ({ key }) => {
     if (key === 'login') {
+      removeToken();
       navigate('/login');
     } else {
       notification.info({

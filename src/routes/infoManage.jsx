@@ -1,6 +1,6 @@
 import React from 'react';
 import { RedditOutlined } from '@ant-design/icons';
-import { LazyComp, transformRouterSidebar } from './help';
+import { LazyComp, transformRouterSidebar, transformRouterSidebarAll } from './help';
 import Layout from '../component/Layout';
 
 const GoldEgg = React.lazy(() => import('../pages/infoManage/products'));
@@ -37,5 +37,6 @@ const Routes = [
 ];
 
 export const infoManageMenus = transformRouterSidebar(Routes);
+export const infoManageMenusAll = transformRouterSidebarAll(Routes);
 
 export default Routes;

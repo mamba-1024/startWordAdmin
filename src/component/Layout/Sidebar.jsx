@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Layout, Menu } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { sidebarMenus } from '../../routes';
+import { sidebarMenus, sidebarMenusAll } from '../../routes';
 import logo from '../../logo.svg';
 import { ThemeContext } from '../../context';
 
@@ -34,15 +34,13 @@ export default () => {
   const { theme, collapsed, toggleCollapsed, fixedSidebar } = React.useContext(ThemeContext);
   const navigate = useNavigate();
   const location = useLocation();
-  const [openKeys, setOpenKeys] = useState(getOpenKeys(sidebarMenus, location.pathname));
-
+  const [openKeys, setOpenKeys] = useState(getOpenKeys(sidebarMenusAll, location.pathname));
   const onSelect = (e) => {
-    navigate(`${e.key}${location.search}`);
+    navigate(`${e.key}`);
 
-    setOpenKeys(getOpenKeys(sidebarMenus, e.key));
+    setOpenKeys(getOpenKeys(sidebarMenusAll, e.key));
   };
 
-  console.log(sidebarMenus);
 
   return (
     <Sider
@@ -57,10 +55,11 @@ export default () => {
         {!collapsed && <div className={`logo-title logo-title-${theme}`}>管理系统</div>}
       </div>
       <Menu
-        defaultSelectedKeys={[getKeyByPath(sidebarMenus, location.pathname)]}
+        defaultSelectedKeys={[getKeyByPath(sidebarMenusAll, location.pathname)]}
         openKeys={openKeys}
         mode="inline"
         items={sidebarMenus}
+        onClick={onSelect}
         onSelect={onSelect}
         theme={theme}
         onOpenChange={(keys) => setOpenKeys(keys)}

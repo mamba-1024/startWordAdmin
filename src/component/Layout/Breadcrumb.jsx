@@ -1,7 +1,7 @@
 import React from 'react';
 import { Breadcrumb } from 'antd';
 import { useLocation } from 'react-router-dom';
-import { sidebarMenus } from '../../routes';
+import { sidebarMenusAll } from '../../routes';
 
 export function getBreadcrumbItems(array, path) {
   let breadcrumbItems = [];
@@ -20,7 +20,7 @@ export function getBreadcrumbItems(array, path) {
 
 export default () => {
   const location = useLocation();
-  const breadcrumbItems = getBreadcrumbItems(sidebarMenus, location.pathname);
+  const breadcrumbItems = getBreadcrumbItems(sidebarMenusAll, location.pathname);
   if (breadcrumbItems.length < 2) {
     return null;
   }

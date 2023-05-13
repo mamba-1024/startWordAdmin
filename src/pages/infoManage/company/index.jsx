@@ -1,139 +1,154 @@
-import React, { useState, useRef } from 'react';
-import './index.less';
-import { message, Row, Col } from 'antd';
-import Count from './count';
+// import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
+import { ProTable } from '@ant-design/pro-components';
+import { useRef } from 'react';
+import { entActionListApi, entActionDeleteApi } from '../sever';
+import dayjs from 'dayjs';
+import { useNavigate } from 'react-router-dom';
+import { Image, message, Popconfirm } from 'antd';
 
-const sudokuArray = [
-  { index: 0, dataIndex: 0 },
-  { index: 1, dataIndex: 1 },
-  { index: 2, dataIndex: 2 },
-  { index: 3, dataIndex: 7 },
-  { index: 4, center: true },
-  { index: 5, dataIndex: 3 },
-  { index: 6, dataIndex: 6 },
-  { index: 7, dataIndex: 5 },
-  { index: 8, dataIndex: 4 },
-];
 
-function getRandomIntInclusive(min, max) {
-  const Min = Math.ceil(min);
-  const Max = Math.floor(max);
-  return Math.floor(Math.random() * (Max - Min + 1)) + Min; // 含最大值，含最小值
-}
+export default () => {
+  const actionRef = useRef();
+  const navigate = useNavigate();
 
-// function easeInOutQuad(currentTime, startValue = 0, changeValue = 5000, duration = 5000) {
-//   currentTime /= duration / 2;
-//   if (currentTime < 1) return (changeValue / 2) * currentTime * currentTime + startValue;
-//   currentTime--;
-//   return (-changeValue / 2) * (currentTime * (currentTime - 2) - 1) + startValue;
-// }
-
-function animate({ timing = (f) => f, draw, duration = 5000 }) {
-  const start = performance.now();
-  let requestId;
-
-  requestId = requestAnimationFrame(function step(time) {
-    // timeFraction 从 0 增加到 1
-    let timeFraction = (time - start) / duration;
-
-    if (timeFraction > 1) {
-      timeFraction = 1;
-    }
-
-    // 计算当前动画状态
-    const progress = timing(timeFraction);
-    draw(progress); // 绘制
-
-    if (timeFraction < 1) {
-      requestId = requestAnimationFrame(step);
-    }
-  });
-
-  return () => {
-    cancelAnimationFrame(requestId);
-  };
-}
-
-const Sudoku = () => {
-  const [active, setActive] = useState();
-  // 防止重复点击
-  const lockRef = useRef(false);
-
-  const onStart = () => {
-    if (lockRef.current) {
-      return;
-    }
-    lockRef.current = true;
-
-    try {
-      new Promise((resolve) => {
-        setTimeout(() => {
-          // 获取抽奖结果
-          resolve(getRandomIntInclusive(0, 7));
-        });
-      }).then((res) => {
-        const target = 8 * 4 + res;
-        animate({
-          draw: (progress) => {
-            const cur = Math.floor(target * progress);
-
-            if (cur < target) {
-              setActive(cur % 8);
-              return;
-            }
-
-            setActive(cur % 8);
-            lockRef.current = false;
-            message.success(`抽中了 ${res}`);
-          },
-        });
-      });
-    } catch (e) {
-      lockRef.current = false;
-    }
-  };
-
-  const renderItem = (item) => {
-    if (item.center) {
-      return (
-        <div onClick={onStart} key={item.index} className={`item${item.index}`}>
-          start
-        </div>
-      );
-    }
-
-    return (
-      <div
-        key={item.index}
-        className={`item${item.index} ${active === item.dataIndex && 'activeItem'}`}
-      >
-        {item.dataIndex}
-      </div>
-    );
-  };
+  const columns = [
+    {
+      dataIndex: 'id',
+      width: 48,
+      valueType: 'index',
+      search: false,
+    },
+    {
+      title: '标题',
+      dataIndex: 'title',
+    },
+    {
+      title: '简介',
+      dataIndex: 'shortDesc',
+      search: false,
+      ellipsis: true,
+    },
+    {
+      title: '主图',
+      dataIndex: 'actionMainUrl',
+      search: false,
+      render: (_, record) => {
+        return (
+          <Image
+            src={record.actionMainUrl}
+            width={100}
+            height={100}
+            alt="主图"
+          />
+        );
+      },
+    },
+    {
+      title: '创建时间',
+      dataIndex: 'createdAt',
+      search: false,
+      render: (_, record) => {
+        return record.createdAt ? dayjs(record.createdAt).format('YYYY-MM-DD') : '-';
+      },
+    },
+    // {
+    //   title: '主要内容',
+    //   dataIndex: 'htmlContent',
+    //   search: false,
+    //   render: (_, record) => {
+    //     return record.onboardingDate ? dayjs(record.onboardingDate).format('YYYY-MM-DD') : '-';
+    //   },
+    // },
+    {
+      title: '操作',
+      valueType: 'option',
+      key: 'option',
+      render: (text, record, _, action) => [
+        <a
+          onClick={() => {
+            // navigate(`/employee/detail?id=${record.id}`, { state: { id: record.id } });
+            message.info('暂无详情页');
+          }}
+          rel="noopener noreferrer"
+          key="view"
+        >
+          查看
+        </a>,
+        <a
+          onClick={() => {
+          // navigate(`/employee/detail?id=${record.id}`, { state: { id: record.id } });
+            message.info('敬请期待');
+          }}
+          rel="noopener noreferrer"
+          key="view"
+        >
+          编辑
+        </a>,
+        <Popconfirm
+          title="删除？"
+          description="确定要删除吗？"
+          onConfirm={() => {
+            entActionDeleteApi({ id: record.id }).then((res) => {
+              if (res) {
+                message.success('删除成功');
+                action.reload();
+              } else {
+                message.error(res.msg);
+              }
+            });
+          }}
+          okText="确定"
+          cancelText="取消"
+        >
+          <a
+            rel="noopener noreferrer"
+            key="view"
+          >
+            删除
+          </a>
+        </Popconfirm>,
+      ],
+    },
+  ];
 
   return (
-    <Row>
-      <Col span={8}>
-        <div className="container">
-          {sudokuArray.map((ele) => renderItem(ele))}
-          {/* <div className='item2'>2</div>
-      <div className='item3'>3</div>
-
-      <div className='item8'>8</div>
-      <div className='item9'>start</div>
-      <div className='item4'>4</div>
-
-      <div className='item7'>7</div>
-      <div className='item6'>6</div>
-      <div className='item5'>5</div> */}
-        </div>
-      </Col>
-      <Col span={16}>
-        <Count />
-      </Col>
-    </Row>
+    <ProTable
+      columns={columns}
+      actionRef={actionRef}
+      cardBordered
+      request={async (params = {}, sort, filter) => {
+        return entActionListApi({
+          page: params.current,
+          pageSize: params.pageSize,
+          ...params,
+        });
+      }}
+      rowKey="id"
+      search={{
+        labelWidth: 'auto',
+      }}
+      options={{
+        setting: {
+          listsHeight: 400,
+        },
+      }}
+      form={{
+        // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
+        syncToUrl: (values, type) => {
+          if (type === 'get') {
+            return {
+              ...values,
+              created_at: [values.startTime, values.endTime],
+            };
+          }
+          return values;
+        },
+      }}
+      pagination={{
+        pageSize: 10,
+        onChange: (page) => console.log(page),
+      }}
+      dateFormatter="string"
+    />
   );
 };
-
-export default Sudoku;
