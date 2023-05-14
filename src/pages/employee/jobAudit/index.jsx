@@ -1,7 +1,13 @@
 import { ExportOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-components';
 import { useRef, useState } from 'react';
-import { listAuditApi, auditPassApi, auditRefuseApi } from '../sever';
+import {
+  listAuditApi,
+  auditPassApi,
+  auditRefuseApi,
+  batchAuditPassApi,
+  batchAuditRejectApi,
+} from '../sever';
 import { message, Modal, Input, Form, Table, Space, Button } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
@@ -109,8 +115,7 @@ export default () => {
         operate.push(
           <a
             onClick={() => {
-              // navigate(`/employee/detail?id=${record.id}`, { state: { id: record.id } });
-              message.info('暂无详情页');
+              navigate(`/employee/detail?id=${record.id}`, { state: { id: record.id } });
             }}
             rel="noopener noreferrer"
             key="view"
@@ -127,17 +132,12 @@ export default () => {
     <>
       <ProTable
         rowSelection={{
-        // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
-        // 注释该行则默认不显示下拉选项
+          // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
+          // 注释该行则默认不显示下拉选项
           selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
           defaultSelectedRowKeys: [],
         }}
-        tableAlertRender={({
-          selectedRowKeys,
-          selectedRows,
-          onCleanSelected,
-        }) => {
-          console.log(selectedRowKeys, selectedRows);
+        tableAlertRender={({ selectedRowKeys, onCleanSelected }) => {
           return (
             <Space size={24}>
               <span>
@@ -149,11 +149,35 @@ export default () => {
             </Space>
           );
         }}
-        tableAlertOptionRender={() => {
+        tableAlertOptionRender={({ selectedRowKeys, onCleanSelected }) => {
           return (
             <Space size={16}>
-              <Button type="primary" ghost>批量审核通过</Button>
-              <Button type="primary" ghost>批量审核不通过</Button>
+              <Button
+                type="primary"
+                ghost
+                onClick={async () => {
+                  await batchAuditPassApi(selectedRowKeys);
+                  message.success('批量审核通过完成', 0.5, () => {
+                    actionRef.current.reload();
+                    onCleanSelected();
+                  });
+                }}
+              >
+                批量审核通过
+              </Button>
+              <Button
+                type="primary"
+                ghost
+                onClick={async () => {
+                  await batchAuditRejectApi(selectedRowKeys);
+                  message.success('批量审核不通过完成', 0.5, () => {
+                    actionRef.current.reload();
+                    onCleanSelected();
+                  });
+                }}
+              >
+                批量审核不通过
+              </Button>
               {/* <Button type="primary" ghost>导出数据</Button> */}
             </Space>
           );
@@ -195,20 +219,20 @@ export default () => {
           onChange: (page) => console.log(page),
         }}
         dateFormatter="string"
-        toolBarRender={() => [
-          <Button
-            key="button"
-            icon={<ExportOutlined />}
-            onClick={async () => {
-            // const params = filterRef.current.getFieldsFormatValue();
-            // const str = Object.keys(params).map((key) => `${key}=${params[key]}`).join('&');
-            // window.open(`${window.location.origin}/backend/attendance/export?${str}`);
-            }}
-            type="primary"
-          >
-            导出
-          </Button>,
-        ]}
+        // toolBarRender={() => [
+        //   <Button
+        //     key="button"
+        //     icon={<ExportOutlined />}
+        //     onClick={async () => {
+        //       // const params = filterRef.current.getFieldsFormatValue();
+        //       // const str = Object.keys(params).map((key) => `${key}=${params[key]}`).join('&');
+        //       // window.open(`${window.location.origin}/backend/attendance/export?${str}`);
+        //     }}
+        //     type="primary"
+        //   >
+        //     导出
+        //   </Button>,
+        // ]}
       />
       <Modal
         title="审核拒绝"

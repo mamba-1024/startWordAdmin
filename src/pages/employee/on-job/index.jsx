@@ -1,14 +1,22 @@
 import { ExportOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-components';
 import { useRef } from 'react';
-import { requestFun, enableApi, disableApi, clearPointsApi } from '../sever';
+import {
+  requestFun,
+  enableApi,
+  disableApi,
+  clearPointsApi,
+  batchDisableApi,
+  batchEnableApi,
+  batchClearPointsApi,
+} from '../sever';
 import { message, Popconfirm, Table, Space, Button } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 
-
 export default () => {
   const actionRef = useRef();
+  const filterRef = useRef();
   const navigate = useNavigate();
 
   const columns = [
@@ -57,7 +65,7 @@ export default () => {
     },
     {
       title: '启用状态',
-      dataIndex: 'onBoard',
+      dataIndex: 'status',
       valueType: 'select',
       valueEnum: {
         true: {
@@ -82,6 +90,22 @@ export default () => {
       },
       render: (_, record) => {
         return record.onboardingDate ? dayjs(record.onboardingDate).format('YYYY-MM-DD') : '-';
+      },
+    },
+    {
+      title: '启用时间',
+      dataIndex: 'enableDate',
+      search: false,
+      render: (_, record) => {
+        return record.enableDate ? dayjs(record.enableDate).format('YYYY-MM-DD') : '-';
+      },
+    },
+    {
+      title: '停用时间',
+      dataIndex: 'disableDate',
+      search: false,
+      render: (_, record) => {
+        return record.disableDate ? dayjs(record.disableDate).format('YYYY-MM-DD') : '-';
       },
     },
     {
@@ -133,10 +157,7 @@ export default () => {
           okText="确定"
           cancelText="取消"
         >
-          <a
-            rel="noopener noreferrer"
-            key="view"
-          >
+          <a rel="noopener noreferrer" key="view">
             积分清零
           </a>
         </Popconfirm>,
@@ -152,12 +173,7 @@ export default () => {
         selections: [Table.SELECTION_ALL, Table.SELECTION_INVERT],
         defaultSelectedRowKeys: [],
       }}
-      tableAlertRender={({
-        selectedRowKeys,
-        selectedRows,
-        onCleanSelected,
-      }) => {
-        console.log(selectedRowKeys, selectedRows);
+      tableAlertRender={({ selectedRowKeys, onCleanSelected }) => {
         return (
           <Space size={24}>
             <span>
@@ -169,12 +185,48 @@ export default () => {
           </Space>
         );
       }}
-      tableAlertOptionRender={() => {
+      tableAlertOptionRender={({ selectedRowKeys, onCleanSelected }) => {
         return (
           <Space size={16}>
-            <Button type="primary" ghost>批量启用</Button>
-            <Button type="primary" ghost>批量停用</Button>
-            {/* <Button type="primary" ghost>导出数据</Button> */}
+            <Button
+              type="primary"
+              ghost
+              onClick={async () => {
+                await batchEnableApi(selectedRowKeys);
+                message.success('批量启用成功', 0.5, () => {
+                  actionRef.current.reload();
+                  onCleanSelected();
+                });
+              }}
+            >
+              批量启用
+            </Button>
+            <Button
+              type="primary"
+              ghost
+              onClick={async () => {
+                await batchDisableApi(selectedRowKeys);
+                message.success('批量停用成功', 0.5, () => {
+                  actionRef.current.reload();
+                  onCleanSelected();
+                });
+              }}
+            >
+              批量停用
+            </Button>
+            <Button
+              type="primary"
+              ghost
+              onClick={async () => {
+                await batchClearPointsApi(selectedRowKeys);
+                message.success('批量积分清零成功', 0.5, () => {
+                  actionRef.current.reload();
+                  onCleanSelected();
+                });
+              }}
+            >
+              批量积分清零
+            </Button>
           </Space>
         );
       }}
@@ -184,6 +236,7 @@ export default () => {
       }}
       columns={columns}
       actionRef={actionRef}
+      formRef={filterRef}
       cardBordered
       request={async (params = {}, sort, filter) => {
         return requestFun({
@@ -220,9 +273,9 @@ export default () => {
           key="button"
           icon={<ExportOutlined />}
           onClick={async () => {
-            // const params = filterRef.current.getFieldsFormatValue();
-            // const str = Object.keys(params).map((key) => `${key}=${params[key]}`).join('&');
-            // window.open(`${window.location.origin}/backend/attendance/export?${str}`);
+            const params = filterRef.current.getFieldsFormatValue();
+            const str = Object.keys(params).map((key) => `${key}=${params[key]}`).join('&');
+            window.open(`${window.location.origin}/backend/employee/export?${str}`);
           }}
           type="primary"
         >

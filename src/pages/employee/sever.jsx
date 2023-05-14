@@ -77,3 +77,48 @@ export async function auditPassApi(query) {
     data: query,
   });
 }
+
+// 批量启用
+export async function batchEnableApi(query) {
+  return await request({
+    url: '/backend/employee/batchEnable',
+    method: 'post',
+    data: query,
+  });
+}
+
+// 批量停用
+export async function batchDisableApi(query) {
+  return await request({
+    url: '/backend/employee/batchDisable',
+    method: 'post',
+    data: query,
+  });
+}
+
+// 批量清零积分 /backend/employee/batchClearPoint
+export async function batchClearPointsApi(query) {
+  return await request({
+    url: '/backend/employee/batchClearPoint',
+    method: 'post',
+    data: query,
+  });
+}
+
+// 批量审核通过 /backend/employee/batchAuditPass
+export async function batchAuditPassApi(query) {
+  return await request({
+    url: '/backend/employee/batchAuditPass',
+    method: 'post',
+    data: query,
+  });
+}
+
+// 批量审核拒绝 /backend/employee/batchAuditReject
+export async function batchAuditRejectApi(query) {
+  return await request({
+    url: '/backend/employee/batchAuditReject',
+    method: 'post',
+    data: query,
+  });
+}

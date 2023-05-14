@@ -19,11 +19,11 @@ const Routes = [
       {
         path: '/employee/onJob',
         key: '/employee/onJob',
-        label: '在职管理',
+        label: '基本信息',
         hide: false,
         exact: true,
         element: LazyComp(OnJob),
-        crumb: ['员工管理', '在职管理'], // 自定义面包屑
+        crumb: ['员工管理', '基本信息'], // 自定义面包屑
       },
       {
         path: '/employee/detail',
@@ -37,11 +37,11 @@ const Routes = [
       {
         path: '/employee/jobAudit',
         key: '/employee/jobAudit',
-        label: '入职审核',
+        label: '入职管理',
         hide: false,
         exact: true,
         element: LazyComp(JobAudit),
-        crumb: ['员工管理', '入职审核'], // 自定义面包屑
+        crumb: ['员工管理', '入职管理'], // 自定义面包屑
       },
     ],
   },

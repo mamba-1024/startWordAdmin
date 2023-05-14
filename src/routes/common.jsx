@@ -20,7 +20,7 @@ const Routes = [
         key: '/dashboard',
         exact: true, // 是否精确匹配
         hide: false, // 是否隐藏
-        label: 'Dashboard', // 路由名称
+        label: '数据概览', // 路由名称
         icon: <DashboardOutlined />, // 路由图标
         element: LazyComp(Dashboard), // 路由组件
       },

@@ -8,7 +8,7 @@ const Sudoku = React.lazy(() => import('../pages/infoManage/company'));
 
 const Routes = [
   {
-    label: '信息管理',
+    label: '配置管理',
     hide: false,
     icon: <RedditOutlined />,
     key: 'infoManage',
@@ -17,11 +17,11 @@ const Routes = [
       {
         path: '/infoManage/products',
         key: '/infoManage/products',
-        label: '产品动态',
+        label: '产品管理',
         hide: false,
         exact: true,
         element: LazyComp(GoldEgg),
-        crumb: ['信息管理', '产品动态'], // 自定义面包屑
+        crumb: ['配置管理', '产品管理'], // 自定义面包屑
       },
       {
         path: '/infoManage/company',
@@ -30,7 +30,7 @@ const Routes = [
         hide: false,
         exact: true,
         element: LazyComp(Sudoku),
-        crumb: ['信息管理', '企业动态'], // 自定义面包屑
+        crumb: ['配置管理', '企业动态'], // 自定义面包屑
       },
     ],
   },

@@ -20,7 +20,7 @@ const rootRouter = [
   },
   {
     path: '/',
-    element: <Navigate to="/login" />,
+    element: <Navigate to="/dashboard" />,
   },
 ].concat(employeeRoutes, CommonRoutes, AttendanceManageRoutes, InfoManageRoutes);
 

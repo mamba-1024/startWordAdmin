@@ -16,11 +16,11 @@ const Routes = [
       {
         path: '/attendanceManage/day',
         key: '/attendanceManage/day',
-        label: '日报',
+        label: '员工考勤',
         hide: false,
         exact: true,
         element: LazyComp(Day),
-        crumb: ['考勤管理', '日报'], // 自定义面包屑
+        crumb: ['考勤管理', '员工考勤'], // 自定义面包屑
       },
     ],
   },

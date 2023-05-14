@@ -40,14 +40,14 @@ export default () => {
     },
     {
       title: '员工状态',
-      dataIndex: 'status',
+      dataIndex: 'onBoard',
       search: false,
       valueEnum: {
         true: {
-          text: '启用',
+          text: '在职',
         },
         false: {
-          text: '停用',
+          text: '离职',
         },
       },
     },
@@ -60,8 +60,8 @@ export default () => {
           dataIndex: 'commonRecord1',
           search: false,
           render: (_, record) => {
-            return record.commonRecord?.punchUpTime
-              ? `${record.commonRecord?.punchUpTime}`
+            return record.commonRecord
+              ? `${record.commonRecord?.punchUpTime?.hours}:${record.commonRecord?.punchUpTime?.minutes}:${record.commonRecord?.punchUpTime?.seconds}`
               : '-';
           },
         },
@@ -70,15 +70,15 @@ export default () => {
           dataIndex: 'overRecord2',
           search: false,
           render: (_, record) => {
-            return record.overRecord?.punchUpTime
-              ? `${record.overRecord?.punchUpTime}`
+            return record.overRecord
+              ? `${record.overRecord?.punchUpTime?.hours}:${record.overRecord?.punchUpTime?.minutes}:${record.overRecord?.punchUpTime?.seconds}`
               : '-';
           },
         },
       ],
     },
     {
-      title: '下班时间',
+      title: '上班时间',
       search: false,
       children: [
         {
@@ -86,8 +86,8 @@ export default () => {
           dataIndex: 'commonRecord',
           search: false,
           render: (_, record) => {
-            return record.commonRecord?.punchDownTime
-              ? `${record.commonRecord?.punchDownTime}`
+            return record.commonRecord
+              ? `${record.commonRecord?.punchDownTime?.hours}:${record.commonRecord?.punchDownTime?.minutes}:${record.commonRecord?.punchDownTime?.seconds}`
               : '-';
           },
         },
@@ -96,8 +96,8 @@ export default () => {
           dataIndex: 'overRecord',
           search: false,
           render: (_, record) => {
-            return record.overRecord?.punchDownTime
-              ? `${record.overRecord?.punchDownTime}`
+            return record.overRecord
+              ? `${record.overRecord?.punchDownTime?.hours}:${record.overRecord?.punchDownTime?.minutes}:${record.overRecord?.punchDownTime?.seconds}`
               : '-';
           },
         },
