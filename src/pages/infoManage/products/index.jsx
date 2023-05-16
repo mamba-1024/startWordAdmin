@@ -66,8 +66,7 @@ export default () => {
       render: (text, record, _, action) => [
         <a
           onClick={() => {
-            // navigate(`/employee/detail?id=${record.id}`, { state: { id: record.id } });
-            message.info('暂无详情页');
+            navigate(`/infoManage/detail?type=product&id=${record.id}`);
           }}
           rel="noopener noreferrer"
           key="view"
@@ -76,7 +75,7 @@ export default () => {
         </a>,
         <a
           onClick={() => {
-            navigate(`/infoManage/infoEdit?action=edit&id=${record.id}`, { state: { id: record.id } });
+            navigate(`/infoManage/infoEdit?action=edit&type=product&id=${record.id}`);
           }}
           rel="noopener noreferrer"
           key="view"
@@ -154,7 +153,7 @@ export default () => {
           key="button"
           icon={<PlusOutlined />}
           onClick={() => {
-            navigate('/infoManage/infoEdit?action=add');
+            navigate('/infoManage/infoEdit?action=add&type=product');
           }}
           type="primary"
         >

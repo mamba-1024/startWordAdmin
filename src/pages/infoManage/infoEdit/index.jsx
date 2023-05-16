@@ -3,36 +3,71 @@
  */
 import '@wangeditor/editor/dist/css/style.css'; // 引入 css
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Editor, Toolbar } from '@wangeditor/editor-for-react';
 import {
   ProForm,
   ProFormText,
   ProFormUploadButton,
-  ProFormRadio,
   ProFormTextArea,
   ProFormSwitch,
 } from '@ant-design/pro-components';
-import { message } from 'antd';
-import { uploadApi, uploadImgApi, addProductApi } from '../sever';
+import { message, Skeleton } from 'antd';
+import {
+  uploadApi,
+  uploadImgApi,
+  addProductApi,
+  addEntActionApi,
+  productDetailApi,
+  entActionDetailApi,
+  editProductApi,
+  editEntActionApi,
+} from '../sever';
 import { getToken } from '../../../utils/token';
 import { accept, beforeUpload } from '../indexConfig';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 function MyEditor() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const formRef = useRef();
+  // 详情id
+  const id = searchParams.get('id');
+  // 详情 type
+  const type = searchParams.get('type');
+  // 编辑还是新增
+  const action = searchParams.get('action');
+
   // editor 实例
   const [editor, setEditor] = useState(null); // JS 语法
-
   // 编辑器内容
   const [html, setHtml] = useState('');
+  const [loading, setLoading] = useState(false);
+  // 详情数据
+  const [detail, setDetail] = useState();
 
-  // 模拟 ajax 请求，异步设置 html
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     setHtml('<p>hello world</p>');
-  //   }, 1500);
-  // }, []);
+  // 编辑的时候需要先获取详情
+  useEffect(() => {
+    if (action === 'edit') {
+      let func;
+      if (type === 'product') {
+        func = productDetailApi;
+      } else {
+        func = entActionDetailApi;
+      }
+      if (id && type) {
+        setLoading(true);
+        func({ id })
+          .then((res) => {
+            setDetail(res);
+            setHtml(res.htmlContent);
+          })
+          .finally(() => {
+            setLoading(false);
+          });
+      }
+    }
+  }, [id, type, action]);
 
   // 工具栏配置
   const toolbarConfig = {
@@ -86,11 +121,13 @@ function MyEditor() {
     imgWindow?.document.write(image.outerHTML);
   };
 
-  return (
+  return loading ? (
+    <Skeleton />
+  ) : (
     <>
       <ProForm
+        formRef={formRef}
         onFinish={async (values) => {
-          console.log(values);
           if (!html) {
             message.error('请输入正文内容');
             return;
@@ -102,8 +139,22 @@ function MyEditor() {
             showIndex: values.showIndex,
             htmlContent: html,
           };
-          await addProductApi(params);
-          message.success('提交成功', 1, () => {
+          let func;
+          if (action === 'edit') {
+            params.id = id;
+            if (type === 'product') {
+              func = editProductApi;
+            } else {
+              func = editEntActionApi;
+            }
+          } else if (type === 'product') {
+            func = addProductApi;
+          } else {
+            func = addEntActionApi;
+          }
+          await func(params);
+          const messageText = action === 'edit' ? '编辑成功' : '新增成功';
+          message.success(messageText, 1, () => {
             // 返回上一页
             navigate(-1);
           });
@@ -116,10 +167,11 @@ function MyEditor() {
           // tooltip="最长为 24 位"
           placeholder="请输入标题"
           rules={[{ required: true }]}
+          initialValue={detail?.title}
         />
         <ProFormSwitch
           rules={[{ required: true }]}
-          initialValue={false}
+          initialValue={detail?.showIndex || false}
           name="showIndex"
           label="显示在首页"
           options={[
@@ -139,6 +191,7 @@ function MyEditor() {
           name="shortDesc"
           placeholder="请输入简介"
           maxLength={60}
+          initialValue={detail?.shortDesc}
         />
         <ProFormUploadButton
           rules={[{ required: true }]}
@@ -154,6 +207,9 @@ function MyEditor() {
           accept={accept}
           beforeUpload={beforeUpload}
           onPreview={onPreview}
+          formItemProps={{
+            initialValue: detail?.productMainUrl || detail?.actionMainUrl ? [{ status: 'done', url: detail?.productMainUrl || detail?.actionMainUrl }] : [],
+          }}
         />
         <ProForm.Item label="正文内容" rules={[{ required: true }]}>
           <div style={{ border: '1px solid #ccc', zIndex: 100 }}>
@@ -174,7 +230,7 @@ function MyEditor() {
           </div>
         </ProForm.Item>
       </ProForm>
-      <h1>预览</h1>
+      <h1>正文内容预览</h1>
       <div style={{ marginTop: '15px' }} dangerouslySetInnerHTML={{ __html: html }} />
     </>
   );

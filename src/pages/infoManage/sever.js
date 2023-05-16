@@ -87,3 +87,46 @@ export async function addProductApi(query) {
     data: query,
   });
 }
+
+// 查看产品详情
+export async function productDetailApi(query) {
+  return await request({
+    url: `/backend/product/get/${query.id}`,
+    method: 'get',
+  });
+}
+
+// 编辑产品
+export async function editProductApi(query) {
+  return await request({
+    url: '/backend/product/update',
+    method: 'post',
+    data: query,
+  });
+}
+
+// 新增企业动态
+export async function addEntActionApi(query) {
+  return await request({
+    url: '/backend/entAction/add',
+    method: 'post',
+    data: query,
+  });
+}
+
+// 查看企业动态详情
+export async function entActionDetailApi(query) {
+  return await request({
+    url: `/backend/entAction/get/${query.id}`,
+    method: 'get',
+  });
+}
+
+// 编辑企业动态
+export async function editEntActionApi(query) {
+  return await request({
+    url: '/backend/entAction/update',
+    method: 'post',
+    data: query,
+  });
+}

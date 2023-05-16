@@ -7,6 +7,7 @@ const GoldEgg = React.lazy(() => import('../pages/infoManage/products'));
 const Sudoku = React.lazy(() => import('../pages/infoManage/company'));
 const InfoEdit = React.lazy(() => import('../pages/infoManage/infoEdit'));
 const IndexConfig = React.lazy(() => import('../pages/infoManage/indexConfig'));
+const Detail = React.lazy(() => import('../pages/infoManage/detail'));
 
 const Routes = [
   {
@@ -51,6 +52,15 @@ const Routes = [
         exact: true,
         element: LazyComp(InfoEdit),
         crumb: ['配置管理', '信息配置'], // 自定义面包屑
+      },
+      {
+        path: '/infoManage/detail',
+        key: '/infoManage/detail',
+        label: '',
+        hide: true,
+        exact: true,
+        element: LazyComp(Detail),
+        crumb: ['配置管理', '详情信息'], // 自定义面包屑
       },
     ],
   },

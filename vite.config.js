@@ -28,6 +28,16 @@ export default defineConfig({
         },
         // rewrite: (path) => path.replace(/^\/backend/, '/backend'),
       },
+      '/index': {
+        target: 'https://hznanf.com',
+        changeOrigin: true,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        proxyHeaders: {
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+      },
     },
   },
   plugins: [

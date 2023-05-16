@@ -18,7 +18,6 @@ export default () => {
       detailApi({ id })
         .then((res) => {
           setDetail(res);
-          console.log('detail: ', res);
         })
         .finally(() => {
           setLoading(false);
