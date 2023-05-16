@@ -157,8 +157,8 @@ export default () => {
       }}
       formRef={filterRef}
       pagination={{
-        pageSize: 10,
-        onChange: (page) => console.log(page),
+        pageSize: 50,
+
       }}
       dateFormatter="string"
       toolBarRender={() => [

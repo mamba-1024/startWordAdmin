@@ -13,6 +13,7 @@ import {
 import { message, Popconfirm, Table, Space, Button } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
+import { dateFormat } from '../../../utils/index';
 
 export default () => {
   const actionRef = useRef();
@@ -89,7 +90,7 @@ export default () => {
         },
       },
       render: (_, record) => {
-        return record.onboardingDate ? dayjs(record.onboardingDate).format('YYYY-MM-DD') : '-';
+        return record.onboardingDate ? dayjs(record.onboardingDate).format(dateFormat) : '-';
       },
     },
     {
@@ -97,7 +98,7 @@ export default () => {
       dataIndex: 'enableDate',
       search: false,
       render: (_, record) => {
-        return record.enableDate ? dayjs(record.enableDate).format('YYYY-MM-DD') : '-';
+        return record.enableDate ? dayjs(record.enableDate).format(dateFormat) : '-';
       },
     },
     {
@@ -105,7 +106,7 @@ export default () => {
       dataIndex: 'disableDate',
       search: false,
       render: (_, record) => {
-        return record.disableDate ? dayjs(record.disableDate).format('YYYY-MM-DD') : '-';
+        return record.disableDate ? dayjs(record.disableDate).format(dateFormat) : '-';
       },
     },
     {
@@ -264,8 +265,8 @@ export default () => {
         },
       }}
       pagination={{
-        pageSize: 10,
-        onChange: (page) => console.log(page),
+        pageSize: 50,
+
       }}
       dateFormatter="string"
       toolBarRender={() => [

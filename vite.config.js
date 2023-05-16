@@ -20,6 +20,12 @@ export default defineConfig({
       '/backend': {
         target: 'https://hznanf.com',
         changeOrigin: true,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        proxyHeaders: {
+          'X-Requested-With': 'XMLHttpRequest',
+        },
         // rewrite: (path) => path.replace(/^\/backend/, '/backend'),
       },
     },

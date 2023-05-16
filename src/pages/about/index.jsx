@@ -17,7 +17,7 @@ function AboutPage() {
   const [list, setList] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [query, setQuery] = useState({ page: 1, pageSize: 10 });
+  const [query, setQuery] = useState({ page: 1, pageSize: 50 });
 
   const columns = [
     {

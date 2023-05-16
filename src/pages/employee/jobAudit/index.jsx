@@ -1,4 +1,3 @@
-import { ExportOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-components';
 import { useRef, useState } from 'react';
 import {
@@ -11,6 +10,7 @@ import {
 import { message, Modal, Input, Form, Table, Space, Button } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
+import { dateFormat } from '../../../utils/index';
 
 const { TextArea } = Input;
 
@@ -48,7 +48,7 @@ export default () => {
         },
       },
       render: (_, record) => {
-        return record.onboardingDate ? dayjs(record.onboardingDate).format('YYYY-MM-DD') : '-';
+        return record.onboardingDate ? dayjs(record.onboardingDate).format(dateFormat) : '-';
       },
     },
     {
@@ -215,8 +215,7 @@ export default () => {
           },
         }}
         pagination={{
-          pageSize: 10,
-          onChange: (page) => console.log(page),
+          pageSize: 50,
         }}
         dateFormatter="string"
         // toolBarRender={() => [

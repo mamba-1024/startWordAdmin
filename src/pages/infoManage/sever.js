@@ -1,4 +1,4 @@
-import { request } from '../../utils/request';
+import { request, requestHost } from '../../utils/request';
 
 
 export async function productListApi(query) {
@@ -40,6 +40,49 @@ export async function entActionListApi(query) {
 export async function entActionDeleteApi(query) {
   return await request({
     url: `/backend/entAction/delete/${query.id}`,
+    method: 'post',
+    data: query,
+  });
+}
+
+// 更新主图
+export async function updateMainUrlApi(query) {
+  return await request({
+    url: '/backend/index/setUrl',
+    method: 'post',
+    data: query,
+  });
+}
+
+// 图片上传接口
+export async function uploadImgApi(query) {
+  const formData = new FormData();
+  const boundary = Math.random().toString().substr(2);
+  formData.append('file', query);
+  return await request({
+    url: '/backend/upload',
+    method: 'post',
+    data: formData,
+    headers: {
+      'Content-Type': `multipart/form-data; boundary=----WebKitFormBoundary${boundary}`,
+      'X-Requested-With': 'XMLHttpRequest',
+    },
+  });
+}
+
+// 图片上传api
+export const uploadApi = () => {
+  const api = '/backend/upload';
+  if (process.env.NODE_ENV === 'production') {
+    return requestHost + api;
+  }
+  return api;
+};
+
+// 新增产品内容
+export async function addProductApi(query) {
+  return await request({
+    url: '/backend/product/add',
     method: 'post',
     data: query,
   });

@@ -4,7 +4,7 @@ import { getToken } from './token';
 
 // const requestHost = 'https://www.fastmock.site/mock/750e52b38d306262a62ff61d1858d451/kt';
 
-const requestHost = 'http://hznanf.com';
+export const requestHost = 'http://hznanf.com';
 // const requestHost = 'http://112.124.2.130:8088';
 
 if (process.env.NODE_ENV === 'production') {
@@ -38,7 +38,13 @@ function fetch({ url, method, data, headers }) {
 export async function request({ url, method, data, headers }) {
   try {
     const res = await fetch({ url, method, data, headers });
-    console.log('request res: ', res);
+
+    if (url.endsWith('/backend/upload')) {
+      console.log(url, res, 'res');
+      const urlHost = 'https://hznfsb.oss-cn-hangzhou.aliyuncs.com/';
+      return `${urlHost}${res.data}`;
+    }
+
     if (res.status === 200) {
       if (res.data.code === 200) {
         return res.data.data;
@@ -49,12 +55,12 @@ export async function request({ url, method, data, headers }) {
     message.error(res.statusText);
     return Promise.reject(res.data);
   } catch (error) {
-    if (error.response.status === 401) {
-      message.error('登录过期，请重新登录', 1, () => {
-        window.location.href = '/login';
-      });
-      return Promise.reject(error.response);
-    }
+    // if (error.response.status === 401) {
+    //   message.error('登录过期，请重新登录', 1, () => {
+    //     window.location.href = '/login';
+    //   });
+    //   return Promise.reject(error.response);
+    // }
     message.error(error.response.message);
     return Promise.reject(error.response);
   }

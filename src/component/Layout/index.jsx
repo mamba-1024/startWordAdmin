@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Layout, ConfigProvider } from 'antd';
+import { PageContainer, ProCard } from '@ant-design/pro-components';
 import { Outlet } from 'react-router-dom';
 import Breadcrumb from './Breadcrumb';
 import DrawerComp from './Drawer';
@@ -48,7 +49,7 @@ function App() {
       colorPrimary,
       toggleColorPrimary: setColorPrimary,
     }),
-    [collapsed, theme, colorWeak, fixedSidebar, fixedHeader, visible, colorPrimary]
+    [collapsed, theme, colorWeak, fixedSidebar, fixedHeader, visible, colorPrimary],
   );
 
   const layoutStyle = useMemo(() => {
@@ -87,7 +88,12 @@ function App() {
               }}
             >
               <Breadcrumb />
-              <div
+              <PageContainer>
+                <ProCard>
+                  <Outlet />
+                </ProCard>
+              </PageContainer>
+              {/* <div
                 className="site-layout-background"
                 style={{
                   padding: 24,
@@ -95,7 +101,7 @@ function App() {
                 }}
               >
                 <Outlet />
-              </div>
+              </div> */}
             </Content>
             <Footer />
             <DrawerComp />

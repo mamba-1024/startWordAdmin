@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { attendanceListApi } from '../sever';
 import dayjs from 'dayjs';
 import { Button } from 'antd';
+import { isNull } from '../../../utils/index';
 // import { useNavigate } from 'react-router-dom';
 
 export default () => {
@@ -56,7 +57,7 @@ export default () => {
       search: false,
       children: [
         {
-          title: '班次1',
+          title: '普通班次',
           dataIndex: 'commonRecord1',
           search: false,
           render: (_, record) => {
@@ -66,7 +67,7 @@ export default () => {
           },
         },
         {
-          title: '班次2',
+          title: '加班班次',
           dataIndex: 'overRecord2',
           search: false,
           render: (_, record) => {
@@ -82,7 +83,7 @@ export default () => {
       search: false,
       children: [
         {
-          title: '班次1',
+          title: '普通班次',
           dataIndex: 'commonRecord',
           search: false,
           render: (_, record) => {
@@ -92,7 +93,7 @@ export default () => {
           },
         },
         {
-          title: '班次2',
+          title: '加班班次',
           dataIndex: 'overRecord',
           search: false,
           render: (_, record) => {
@@ -104,20 +105,20 @@ export default () => {
       ],
     },
     {
-      title: '班次1时长',
+      title: '普通班次时长',
       dataIndex: 'commonRecord11',
       search: false,
       render: (_, record) => {
-        return record.commonRecord?.hours || '-';
+        return isNull(record.commonRecord?.hours) ? '-' : record.commonRecord?.hours;
       },
     },
 
     {
-      title: '班次2时长',
+      title: '加班班次时长',
       dataIndex: 'overRecord22',
       search: false,
       render: (_, record) => {
-        return record.overRecord?.hours || '-';
+        return isNull(record.overRecord?.hours) ? '-' : record.overRecord?.hours;
       },
     },
   ];
@@ -157,8 +158,8 @@ export default () => {
       }}
       formRef={filterRef}
       pagination={{
-        pageSize: 10,
-        onChange: (page) => console.log(page),
+        pageSize: 50,
+
       }}
       dateFormatter="string"
       toolBarRender={() => [

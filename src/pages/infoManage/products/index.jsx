@@ -1,10 +1,10 @@
-// import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-components';
 import { useRef } from 'react';
 import { productListApi, deleteApi } from '../sever';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
-import { Image, message, Popconfirm } from 'antd';
+import { Image, message, Popconfirm, Button } from 'antd';
 
 
 export default () => {
@@ -76,8 +76,7 @@ export default () => {
         </a>,
         <a
           onClick={() => {
-          // navigate(`/employee/detail?id=${record.id}`, { state: { id: record.id } });
-            message.info('敬请期待');
+            navigate(`/infoManage/infoEdit?action=edit&id=${record.id}`, { state: { id: record.id } });
           }}
           rel="noopener noreferrer"
           key="view"
@@ -126,6 +125,7 @@ export default () => {
       rowKey="id"
       search={{
         labelWidth: 'auto',
+        defaultCollapsed: false,
       }}
       options={{
         setting: {
@@ -145,10 +145,22 @@ export default () => {
         },
       }}
       pagination={{
-        pageSize: 10,
-        onChange: (page) => console.log(page),
+        pageSize: 50,
+
       }}
       dateFormatter="string"
+      toolBarRender={() => [
+        <Button
+          key="button"
+          icon={<PlusOutlined />}
+          onClick={() => {
+            navigate('/infoManage/infoEdit?action=add');
+          }}
+          type="primary"
+        >
+          新建
+        </Button>,
+      ]}
     />
   );
 };
