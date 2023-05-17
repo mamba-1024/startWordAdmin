@@ -156,10 +156,6 @@ export default () => {
         },
       }}
       formRef={filterRef}
-      pagination={{
-        pageSize: 50,
-
-      }}
       dateFormatter="string"
       toolBarRender={() => [
         <Button

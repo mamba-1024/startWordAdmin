@@ -142,10 +142,6 @@ export default () => {
           return values;
         },
       }}
-      pagination={{
-        pageSize: 50,
-
-      }}
       dateFormatter="string"
     />
   );

@@ -12,7 +12,7 @@ import {
   ProFormTextArea,
   ProFormSwitch,
 } from '@ant-design/pro-components';
-import { message, Skeleton } from 'antd';
+import { message, Skeleton, Button, Drawer } from 'antd';
 import {
   uploadApi,
   uploadImgApi,
@@ -45,6 +45,8 @@ function MyEditor() {
   const [loading, setLoading] = useState(false);
   // 详情数据
   const [detail, setDetail] = useState();
+
+  const [open, setOpen] = useState(false);
 
   // 编辑的时候需要先获取详情
   useEffect(() => {
@@ -211,7 +213,7 @@ function MyEditor() {
             initialValue: detail?.productMainUrl || detail?.actionMainUrl ? [{ status: 'done', url: detail?.productMainUrl || detail?.actionMainUrl }] : [],
           }}
         />
-        <ProForm.Item label="正文内容" rules={[{ required: true }]}>
+        <ProForm.Item label="正文内容" rules={[{ required: true }]} extra={<Button style={{ marginTop: 10 }} type="primary" ghost onClick={() => setOpen(true)}>预览</Button>}>
           <div style={{ border: '1px solid #ccc', zIndex: 100 }}>
             <Toolbar
               editor={editor}
@@ -225,13 +227,14 @@ function MyEditor() {
               onCreated={setEditor}
               onChange={(edit) => setHtml(edit.getHtml())}
               mode="default"
-              style={{ height: '500px', overflowY: 'hidden' }}
+              style={{ height: '400px', overflowY: 'hidden' }}
             />
           </div>
         </ProForm.Item>
       </ProForm>
-      <h1>正文内容预览</h1>
-      <div style={{ marginTop: '15px' }} dangerouslySetInnerHTML={{ __html: html }} />
+      <Drawer title="正文内容预览" placement="right" onClose={() => setOpen(false)} open={open} zIndex={1200}>
+        <div style={{ marginTop: '15px' }} dangerouslySetInnerHTML={{ __html: html }} />
+      </Drawer>
     </>
   );
 }

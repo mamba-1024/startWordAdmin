@@ -26,6 +26,7 @@ export default () => {
       width: 48,
       valueType: 'index',
       search: false,
+      fixed: 'left',
     },
     {
       title: '姓名',
@@ -37,7 +38,7 @@ export default () => {
     },
     {
       title: '注册时间',
-      dataIndex: 'onboardingDate',
+      dataIndex: 'createTime',
       valueType: 'dateRange',
       search: {
         transform: (value) => {
@@ -48,13 +49,13 @@ export default () => {
         },
       },
       render: (_, record) => {
-        return record.onboardingDate ? dayjs(record.onboardingDate).format(dateFormat) : '-';
+        return record.createTime ? dayjs(record.createTime).format(dateFormat) : '-';
       },
     },
     {
       title: '审核状态',
       dataIndex: 'auditStatus',
-      search: false,
+      search: true,
       valueEnum: {
         REJECT: {
           text: '审核不通过',
@@ -71,6 +72,7 @@ export default () => {
       title: '是否实名',
       dataIndex: 'isAuthenticated',
       valueType: 'select',
+      search: false,
       valueEnum: {
         true: {
           text: '是',
@@ -131,6 +133,7 @@ export default () => {
   return (
     <>
       <ProTable
+        scroll={{ x: 'max-content' }}
         rowSelection={{
           // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
           // 注释该行则默认不显示下拉选项
@@ -213,9 +216,6 @@ export default () => {
             }
             return values;
           },
-        }}
-        pagination={{
-          pageSize: 50,
         }}
         dateFormatter="string"
         // toolBarRender={() => [

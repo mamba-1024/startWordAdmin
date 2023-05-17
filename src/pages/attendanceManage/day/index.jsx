@@ -53,11 +53,11 @@ export default () => {
       },
     },
     {
-      title: '上班时间',
+      title: '普通班次',
       search: false,
       children: [
         {
-          title: '普通班次',
+          title: '上班时间',
           dataIndex: 'commonRecord1',
           search: false,
           render: (_, record) => {
@@ -67,23 +67,7 @@ export default () => {
           },
         },
         {
-          title: '加班班次',
-          dataIndex: 'overRecord2',
-          search: false,
-          render: (_, record) => {
-            return record.overRecord?.punchUpTime
-              ? `${record.overRecord?.punchUpTime}`
-              : '-';
-          },
-        },
-      ],
-    },
-    {
-      title: '下班时间',
-      search: false,
-      children: [
-        {
-          title: '普通班次',
+          title: '下班时间',
           dataIndex: 'commonRecord',
           search: false,
           render: (_, record) => {
@@ -92,8 +76,24 @@ export default () => {
               : '-';
           },
         },
+      ],
+    },
+    {
+      title: '加班班次',
+      search: false,
+      children: [
         {
-          title: '加班班次',
+          title: '上班时间',
+          dataIndex: 'overRecord2',
+          search: false,
+          render: (_, record) => {
+            return record.overRecord?.punchUpTime
+              ? `${record.overRecord?.punchUpTime}`
+              : '-';
+          },
+        },
+        {
+          title: '下班时间',
           dataIndex: 'overRecord',
           search: false,
           render: (_, record) => {
@@ -125,6 +125,7 @@ export default () => {
 
   return (
     <ProTable
+      scroll={{ x: 'max-content' }}
       rowKey={(record, index) => index}
       columns={columns}
       actionRef={actionRef}
@@ -157,10 +158,6 @@ export default () => {
         },
       }}
       formRef={filterRef}
-      pagination={{
-        pageSize: 50,
-
-      }}
       dateFormatter="string"
       toolBarRender={() => [
         <Button

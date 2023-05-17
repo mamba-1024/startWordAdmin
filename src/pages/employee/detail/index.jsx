@@ -116,6 +116,12 @@ export default () => {
               ? dayjs(detail?.employeeDetails?.createTime).format('YYYY-MM-DD')
               : '-'}
           </ProDescriptions.Item>
+          <ProDescriptions.Item label="身份证正面">
+            <Image src={detail?.employeeDetails?.idCardFrontUrl} width={200} height={100} />
+          </ProDescriptions.Item>
+          <ProDescriptions.Item label="身份证反面">
+            <Image src={detail?.employeeDetails?.idCardBackendUrl} width={200} height={100} />
+          </ProDescriptions.Item>
         </ProDescriptions>
       )}
     </Card>

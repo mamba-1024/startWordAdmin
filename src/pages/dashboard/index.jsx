@@ -1,80 +1,27 @@
-import React, { useRef, useEffect } from 'react';
-import { Card, Row, Col } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Card, Row, Col, Tag } from 'antd';
 import { PageHeader } from '@ant-design/pro-layout';
-import { Gauge, Liquid, Column } from '@ant-design/plots';
-import DemoLine from './Line';
+import { Liquid, Column, Pie } from '@ant-design/plots';
+import { queryHomeData } from './server';
+import { ProList } from '@ant-design/pro-components';
 
 export default function Dashboard() {
-  const ticks = [0, 1 / 3, 2 / 3, 1];
-  const color = ['#F4664A', '#FAAD14', '#30BF78'];
-  const graphRef = useRef(null);
-  useEffect(() => {
-    if (graphRef?.current) {
-      let data = 0.7;
-      const interval = setInterval(() => {
-        if (data >= 1.5) {
-          clearInterval(interval);
-        }
-
-        data += 0.005;
-        graphRef.current?.changeData(data > 1 ? data - 1 : data);
-      }, 100);
-    }
-  }, [graphRef]);
-  const config = {
-    percent: 0,
-    range: {
-      ticks: [0, 1],
-      color: ['l(0) 0:#F4664A 0.5:#FAAD14 1:#30BF78'],
-    },
-    indicator: {
-      pointer: {
-        style: {
-          stroke: '#D0D0D0',
-        },
-      },
-      pin: {
-        style: {
-          stroke: '#D0D0D0',
-        },
-      },
-    },
+  // 待审核员工数量
+  const [waitAuditCount, setWaitAuditCount] = useState(0);
+  const waitAuditCountConfig = {
+    percent: 0.65,
     statistic: {
       title: {
-        formatter: ({ percent }) => {
-          if (percent < ticks[1]) {
-            return '差';
-          }
-
-          if (percent < ticks[2]) {
-            return '中';
-          }
-
-          return '优';
+        content: '待审核员工数量',
+        style: {
+          fontSize: 14,
         },
-        style: ({ percent }) => ({
-          fontSize: '18px',
-          lineHeight: 1,
-          // eslint-disable-next-line no-nested-ternary
-          color: percent < ticks[1] ? color[0] : percent < ticks[2] ? color[1] : color[2],
-        }),
       },
       content: {
-        offsetY: 24,
-        style: {
-          fontSize: '12px',
-          color: '#4B535E',
-        },
-        formatter: () => '表现',
+        content: waitAuditCount,
+        offsetY: 10,
       },
     },
-    onReady: (plot) => {
-      graphRef.current = plot;
-    },
-  };
-
-  const LiquidConfig = {
-    percent: 0.75,
     outline: {
       border: 4,
       distance: 8,
@@ -83,32 +30,11 @@ export default function Dashboard() {
       length: 128,
     },
   };
+  // 员工上班情况
+  const [employeeWorkCount, setEmployeeWorkCount] = useState([]);
 
-  const data = [
-    {
-      type: '新人',
-      sales: 36,
-    },
-    {
-      type: '加班',
-      sales: 52,
-    },
-    {
-      type: '早班',
-      sales: 75,
-    },
-    {
-      type: '员工总数',
-      sales: 145,
-    },
-    {
-      type: '晚班',
-      sales: 70,
-    },
-
-  ];
-  const ColumnConfig = {
-    data,
+  const employeeWorkCountConfig = {
+    data: employeeWorkCount,
     xField: 'type',
     yField: 'sales',
     label: {
@@ -129,54 +55,175 @@ export default function Dashboard() {
     },
     meta: {
       type: {
-        alias: '类别',
+        alias: '等级',
       },
       sales: {
-        alias: '销售额',
+        alias: '人数',
       },
     },
   };
+  // 等级分布
+  const [levelData, setLevelData] = useState([]);
+
+  const ColumnConfig = {
+    data: levelData,
+    xField: 'type',
+    yField: 'sales',
+    label: {
+      // 可手动配置 label 数据标签位置
+      position: 'middle',
+      // 'top', 'bottom', 'middle',
+      // 配置样式
+      style: {
+        fill: '#FFFFFF',
+        opacity: 0.6,
+      },
+    },
+    xAxis: {
+      label: {
+        autoHide: true,
+        autoRotate: false,
+      },
+    },
+    meta: {
+      type: {
+        alias: '等级',
+      },
+      sales: {
+        alias: '人数',
+      },
+    },
+  };
+  // 员工统计
+  const employeeCount = [
+    {
+      type: '昨日启用员工',
+      value: 27,
+    },
+    {
+      type: '昨日新增员工',
+      value: 25,
+    },
+    {
+      type: '昨日停用员工',
+      value: 18,
+    },
+  ];
+  const employeeCountConfig = {
+    appendPadding: 10,
+    data: employeeCount,
+    angleField: 'value',
+    colorField: 'type',
+    radius: 0.9,
+    label: {
+      type: 'inner',
+      offset: '-30%',
+      content: ({ percent }) => `${(percent * 100).toFixed(0)}%`,
+      style: {
+        fontSize: 14,
+        textAlign: 'center',
+      },
+    },
+    interactions: [
+      {
+        type: 'element-active',
+      },
+    ],
+  };
+
+  // 员工积分排名前十
+  const [employees, setEmployees] = useState([]);
+
+  useEffect(() => {
+    queryHomeData().then((res) => {
+      // 等级分布数据
+      const level = Object.keys(res.levelDistribution || {}).map((key) => ({
+        type: key,
+        sales: res.levelDistribution[key],
+      }));
+      setLevelData(level || []);
+      // 员工上班情况
+      const work = Object.keys(res.employeeWorkCount || {}).map((key) => ({
+        type: key,
+        sales: res.employeeWorkCount[key],
+      }));
+      setEmployeeWorkCount(work || []);
+      // 待审核员工数量
+      setWaitAuditCount(res.waitAuditCount);
+      // 员工积分排名前十
+      const employeesData = res.employees.map((item, index) => ({
+        title: item.name,
+        actions: [<Tag color="#87d068">第{index + 1}名</Tag>],
+        content: (
+          <div
+            style={{
+              flex: 1,
+            }}
+          >
+            <div
+              style={{
+                width: 200,
+              }}
+            >
+              <div>积分：{item.points}</div>
+            </div>
+          </div>
+        ),
+      }));
+      setEmployees(employeesData || []);
+    });
+  }, []);
 
   return (
     <div>
-      <PageHeader onBack={() => null} title="Dashboard" backIcon={false} />
+      <PageHeader onBack={() => null} title="数据大盘" backIcon={false} />
 
       <Row gutter={[24]}>
-        <Col span={8}>
-          <Card title="动态仪表盘" bordered={false}>
+        <Col span={12}>
+          <Card title="待审核员工数量" bordered={false}>
             <div style={{ width: '100%', height: 180 }}>
-              <Gauge {...config} ref={graphRef} />
+              <Liquid {...waitAuditCountConfig} />
             </div>
           </Card>
         </Col>
-        <Col span={8}>
-          <Card title="项目进度" bordered={false}>
+        <Col span={12}>
+          <Card title="员工上班情况" bordered={false}>
             <div style={{ width: '100%', height: 180 }}>
-              <Liquid {...LiquidConfig} />
+              <Column {...employeeWorkCountConfig} />
             </div>
           </Card>
         </Col>
-        <Col span={8}>
-          <Card title="统计情况" bordered={false}>
+
+      </Row>
+      <Row style={{ marginTop: 24 }}>
+        <Col span={12}>
+          <Card title="等级分布" bordered={false}>
             <div style={{ width: '100%', height: 180 }}>
               <Column {...ColumnConfig} />
             </div>
           </Card>
         </Col>
-      </Row>
-      {/* <Row style={{ marginTop: 24 }}>
-        <Col span={24}>
-          <Card title="中国地图" bordered={false}>
-            <div style={{ height: 500 }}>
-              <DemoChoroplethMap />
+        <Col span={12}>
+          <Card title="员工统计" bordered={false}>
+            <div style={{ height: 300 }}>
+              <Pie {...employeeCountConfig} />
             </div>
           </Card>
         </Col>
-      </Row> */}
+      </Row>
+
       <Row style={{ marginTop: 24 }}>
         <Col span={24}>
-          <Card title="折线图" bordered={false}>
-            <DemoLine />
+          <Card title="员工积分排名前十" bordered={false}>
+            <ProList
+              dataSource={employees}
+              grid={{ gutter: 16, column: 2 }}
+              metas={{
+                title: {},
+                actions: {},
+                content: {} }
+            }
+            />
           </Card>
         </Col>
       </Row>

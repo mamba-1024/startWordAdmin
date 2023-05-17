@@ -26,6 +26,7 @@ export default () => {
       width: 48,
       valueType: 'index',
       search: false,
+      fixed: 'left',
     },
     {
       title: '姓名',
@@ -41,16 +42,16 @@ export default () => {
       valueType: 'select',
       valueEnum: {
         0: {
-          text: '0',
+          text: 'LV0',
         },
         1: {
-          text: '1',
+          text: 'LV1',
         },
         2: {
-          text: '2',
+          text: 'LV2',
         },
         3: {
-          text: '3',
+          text: 'LV3',
         },
       },
     },
@@ -60,7 +61,7 @@ export default () => {
       search: false,
     },
     {
-      title: '当月累计工时',
+      title: '当月累计工时(小时)',
       dataIndex: 'totalWorkTime',
       search: false,
     },
@@ -78,25 +79,17 @@ export default () => {
       },
     },
     {
-      title: '入职时间',
-      dataIndex: 'onboardingDate',
+      title: '启用时间',
+      dataIndex: 'enableDate',
       valueType: 'dateRange',
       search: {
         transform: (value) => {
           return {
-            incumbencyStart: value[0],
-            incumbencyEnd: value[1],
+            enableDateStart: value[0],
+            enableDateEnd: value[1],
           };
         },
       },
-      render: (_, record) => {
-        return record.onboardingDate ? dayjs(record.onboardingDate).format(dateFormat) : '-';
-      },
-    },
-    {
-      title: '启用时间',
-      dataIndex: 'enableDate',
-      search: false,
       render: (_, record) => {
         return record.enableDate ? dayjs(record.enableDate).format(dateFormat) : '-';
       },
@@ -113,6 +106,7 @@ export default () => {
       title: '操作',
       valueType: 'option',
       key: 'option',
+      fixed: 'right',
       render: (text, record, _, action) => [
         <a
           key="editable"
@@ -168,6 +162,7 @@ export default () => {
 
   return (
     <ProTable
+      scroll={{ x: 'max-content' }}
       rowSelection={{
         // 自定义选择项参考: https://ant.design/components/table-cn/#components-table-demo-row-selection-custom
         // 注释该行则默认不显示下拉选项
@@ -263,10 +258,6 @@ export default () => {
           }
           return values;
         },
-      }}
-      pagination={{
-        pageSize: 50,
-
       }}
       dateFormatter="string"
       toolBarRender={() => [
