@@ -136,11 +136,13 @@ function MyEditor() {
           }
           const params = {
             title: values.title,
-            productMainUrl: values.productMainUrl[0].response,
+            [type === 'product' ? 'productMainUrl' : 'actionMainUrl']: values.productMainUrl[0].response,
             shortDesc: values.shortDesc,
-            showIndex: values.showIndex,
             htmlContent: html,
           };
+          if (type === 'product') {
+            params.showIndex = values.showIndex;
+          }
           let func;
           if (action === 'edit') {
             params.id = id;
@@ -171,22 +173,26 @@ function MyEditor() {
           rules={[{ required: true }]}
           initialValue={detail?.title}
         />
-        <ProFormSwitch
-          rules={[{ required: true }]}
-          initialValue={detail?.showIndex || false}
-          name="showIndex"
-          label="显示在首页"
-          options={[
-            {
-              label: '是',
-              value: true,
-            },
-            {
-              label: '否',
-              value: false,
-            },
-          ]}
-        />
+        {
+          type === 'product' ? (
+            <ProFormSwitch
+              rules={[{ required: true }]}
+              initialValue={detail?.showIndex || false}
+              name="showIndex"
+              label="显示在首页"
+              options={[
+                {
+                  label: '是',
+                  value: true,
+                },
+                {
+                  label: '否',
+                  value: false,
+                },
+              ]}
+            />) : null
+        }
+
         <ProFormTextArea
           rules={[{ required: true }]}
           label="简介"

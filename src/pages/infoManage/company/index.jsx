@@ -1,10 +1,10 @@
-// import { EllipsisOutlined, PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-components';
 import { useRef } from 'react';
 import { entActionListApi, entActionDeleteApi } from '../sever';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
-import { Image, message, Popconfirm } from 'antd';
+import { Image, message, Popconfirm, Button } from 'antd';
 
 
 export default () => {
@@ -143,6 +143,18 @@ export default () => {
         },
       }}
       dateFormatter="string"
+      toolBarRender={() => [
+        <Button
+          key="button"
+          icon={<PlusOutlined />}
+          onClick={() => {
+            navigate('/infoManage/infoEdit?action=add&type=company');
+          }}
+          type="primary"
+        >
+          新建
+        </Button>,
+      ]}
     />
   );
 };

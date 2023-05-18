@@ -1,9 +1,9 @@
 import { ExportOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-components';
 import { useRef } from 'react';
-import { attendanceListApi } from '../sever';
+import { attendanceListApi, exportApi } from '../sever';
 import dayjs from 'dayjs';
-import { Button } from 'antd';
+import { Button, message } from 'antd';
 import { isNull } from '../../../utils/index';
 // import { useNavigate } from 'react-router-dom';
 
@@ -164,10 +164,12 @@ export default () => {
           key="button"
           icon={<ExportOutlined />}
           onClick={async () => {
-            // await exportApi(filterRef.current.getFieldsFormatValue());
-            const params = filterRef.current.getFieldsFormatValue();
-            const str = Object.keys(params).map((key) => `${key}=${params[key]}`).join('&');
-            window.open(`${window.location.origin}/backend/attendance/export/daily?${str}`);
+            const res = await exportApi(filterRef.current.getFieldsFormatValue());
+            if (res.exportUrl) {
+              window.open(res.exportUrl);
+            } else {
+              message.error('导出失败');
+            }
           }}
           type="primary"
         >
@@ -177,10 +179,12 @@ export default () => {
           key="button"
           icon={<ExportOutlined />}
           onClick={async () => {
-            // await exportApi(filterRef.current.getFieldsFormatValue());
-            const params = filterRef.current.getFieldsFormatValue();
-            const str = Object.keys(params).map((key) => `${key}=${params[key]}`).join('&');
-            window.open(`${window.location.origin}/backend/attendance/export/month?${str}`);
+            const res = await exportApi(filterRef.current.getFieldsFormatValue());
+            if (res.exportUrl) {
+              window.open(res.exportUrl);
+            } else {
+              message.error('导出失败');
+            }
           }}
           type="primary"
         >

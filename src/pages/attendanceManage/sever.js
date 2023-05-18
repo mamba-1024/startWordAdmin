@@ -17,7 +17,7 @@ export async function attendanceListApi(query) {
 // 导出记录
 export async function exportApi(query) {
   const res = await request({
-    url: '/backend/attendance/export',
+    url: '/backend/employee/export/oss',
     method: 'post',
     data: query,
   });
