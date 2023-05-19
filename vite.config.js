@@ -35,32 +35,7 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      plugins: [
-        terser({
-          compress: {
-            // 压缩选项
-            drop_console: true, // 删除 console 语句
-            drop_debugger: true, // 删除 debugger 语句
-            pure_funcs: ['console.log'], // 删除 console.log 语句
-            unused: true, // 删除未使用的函数和变量
-            dead_code: true, // 删除不可达的代码
-            // reduce_funcs: true, // 尝试将多个函数合并为一个
-            // reduce_vars: true, // 尝试将多个变量合并为一个
-          },
-          mangle: {
-            // 混淆选项
-            properties: {
-              // 混淆对象属性名
-              regex: /^_/,
-            },
-          },
-          format: {
-            // 输出选项
-            comments: false, // 删除注释
-          },
-          warnings: true, // 是否输出警告信息
-        }),
-      ],
+      plugins: [terser()],
     },
   },
   plugins: [react()],

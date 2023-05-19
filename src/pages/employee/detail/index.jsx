@@ -33,9 +33,6 @@ export default () => {
           <Button type="primary" ghost onClick={() => navigate(-1)}>返回上一页</Button>
         </ProDescriptions.Item>
         <ProDescriptions.Item label="姓名">{detail?.name}</ProDescriptions.Item>
-        <ProDescriptions.Item label="头像">
-          <Image src={detail?.avatar} width={60} height={60} />
-        </ProDescriptions.Item>
         <ProDescriptions.Item label="昵称">{detail?.nickname}</ProDescriptions.Item>
         <ProDescriptions.Item label="手机号">{detail?.phone}</ProDescriptions.Item>
         <ProDescriptions.Item label="等级">{detail?.level}</ProDescriptions.Item>

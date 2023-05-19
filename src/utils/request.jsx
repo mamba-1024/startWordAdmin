@@ -55,12 +55,12 @@ export async function request({ url, method, data, headers }) {
     message.error(res.statusText);
     return Promise.reject(res.data);
   } catch (error) {
-    // if (error.response.status === 401) {
-    //   message.error('登录过期，请重新登录', 1, () => {
-    //     window.location.href = '/login';
-    //   });
-    //   return Promise.reject(error.response);
-    // }
+    if (error.response.status === 401) {
+      message.error('登录过期，请重新登录', 1, () => {
+        window.location.href = '/login';
+      });
+      return Promise.reject(error.response);
+    }
     message.error(error.response.message);
     return Promise.reject(error.response);
   }

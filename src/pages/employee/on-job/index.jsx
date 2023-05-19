@@ -98,7 +98,15 @@ export default () => {
     {
       title: '停用时间',
       dataIndex: 'disableDate',
-      search: false,
+      valueType: 'dateRange',
+      search: {
+        transform: (value) => {
+          return {
+            disableDateStart: value[0],
+            disableDateEnd: value[1],
+          };
+        },
+      },
       render: (_, record) => {
         return record.disableDate ? dayjs(record.disableDate).format(dateFormat) : '-';
       },

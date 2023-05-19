@@ -44,22 +44,6 @@ export default () => {
       },
     },
     {
-      title: '创建时间',
-      dataIndex: 'createdAt',
-      search: false,
-      render: (_, record) => {
-        return record.createdAt ? dayjs(record.createdAt).format('YYYY-MM-DD') : '-';
-      },
-    },
-    // {
-    //   title: '主要内容',
-    //   dataIndex: 'htmlContent',
-    //   search: false,
-    //   render: (_, record) => {
-    //     return record.onboardingDate ? dayjs(record.onboardingDate).format('YYYY-MM-DD') : '-';
-    //   },
-    // },
-    {
       title: '操作',
       valueType: 'option',
       key: 'option',

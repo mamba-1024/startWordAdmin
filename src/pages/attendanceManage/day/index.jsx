@@ -1,16 +1,46 @@
+import React, { useState, useRef } from 'react';
+import { Button, DatePicker, Modal, message } from 'antd';
 import { ExportOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-components';
-import { useRef } from 'react';
-import {attendanceListApi, exportApi, exportDailyApi, exportMonthApi} from '../sever';
 import dayjs from 'dayjs';
-import { Button, message } from 'antd';
-import { isNull } from '../../../utils/index';
-// import { useNavigate } from 'react-router-dom';
+import { attendanceListApi, exportDailyApi, exportMonthApi } from '../sever';
+import {dateFormat, isNull} from '../../../utils/index';
+import { dateFormat2 } from '../../../utils/index';
 
 export default () => {
   const actionRef = useRef();
   const filterRef = useRef();
-  // const navigate = useNavigate();
+
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState(null);
+
+  const handleMonthChange = (date) => {
+    setSelectedMonth(date);
+  };
+
+  const handleExportMonthly = () => {
+    if (selectedMonth) {
+      exportMonthApi({ month: selectedMonth.format('YYYY-MM') })
+          .then(() => {
+            message.success('月报导出成功');
+            setShowDatePicker(false);
+          })
+          .catch((error) => {
+            message.error('月报导出失败');
+            console.error(error);
+          });
+    } else {
+      message.warning('请先选择一个月份');
+    }
+  };
+
+  const handleCancel = () => {
+    setShowDatePicker(false);
+  };
+
+  const handleShowDatePicker = () => {
+    setShowDatePicker(true);
+  };
 
   const columns = [
     {
@@ -62,8 +92,8 @@ export default () => {
           search: false,
           render: (_, record) => {
             return record.commonRecord?.punchUpTime
-              ? `${record.commonRecord?.punchUpTime}`
-              : '-';
+                ?  dayjs(`${record.commonRecord?.punchUpTime}`).format(dateFormat2)
+                : '-';
           },
         },
         {
@@ -72,8 +102,8 @@ export default () => {
           search: false,
           render: (_, record) => {
             return record.commonRecord?.punchDownTime
-              ? `${record.commonRecord?.punchDownTime}`
-              : '-';
+                ? dayjs(`${record.commonRecord?.punchDownTime}`).format(dateFormat2)
+                : '-';
           },
         },
       ],
@@ -88,8 +118,8 @@ export default () => {
           search: false,
           render: (_, record) => {
             return record.overRecord?.punchUpTime
-              ? `${record.overRecord?.punchUpTime}`
-              : '-';
+                ? dayjs(`${record.overRecord?.punchUpTime}`).format(dateFormat2)
+                : '-';
           },
         },
         {
@@ -98,8 +128,8 @@ export default () => {
           search: false,
           render: (_, record) => {
             return record.overRecord?.punchDownTime
-              ? `${record.overRecord?.punchDownTime}`
-              : '-';
+                ? dayjs(`${record.overRecord?.punchDownTime}`).format(dateFormat2)
+                : '-';
           },
         },
       ],
@@ -124,53 +154,70 @@ export default () => {
   ];
 
   return (
-    <ProTable
-      scroll={{ x: 'max-content' }}
-      rowKey={(record, index) => index}
-      columns={columns}
-      actionRef={actionRef}
-      cardBordered
-      request={async (params = {}, sort, filter) => {
-        return attendanceListApi({
-          page: params.current,
-          pageSize: params.pageSize,
-          ...params,
-        });
-      }}
-      search={{
-        labelWidth: 'auto',
-      }}
-      options={{
-        setting: {
-          listsHeight: 400,
-        },
-      }}
-      form={{
-        // 由于配置了 transform，提交的参与与定义的不同这里需要转化一下
-        syncToUrl: (values, type) => {
-          if (type === 'get') {
-            return {
-              ...values,
-              created_at: [values.startTime, values.endTime],
-            };
-          }
-          return values;
-        },
-      }}
-      formRef={filterRef}
-      dateFormatter="string"
-      toolBarRender={() => [
-        <Button
-          key="button"
-          icon={<ExportOutlined />}
-          onClick={async () => {
-            await exportDailyApi(filterRef.current.getFieldsFormatValue());
-          }}
-          type="primary"
+      <>
+        <ProTable
+            scroll={{ x: 'max-content' }}
+            rowKey={(record, index) => index}
+            columns={columns}
+            actionRef={actionRef}
+            cardBordered
+            request={async (params = {}, sort, filter) => {
+              return attendanceListApi({
+                page: params.current,
+                pageSize: params.pageSize,
+                ...params,
+              });
+            }}
+            search={{
+              labelWidth: 'auto',
+            }}
+            options={{
+              setting: {
+                listsHeight: 400,
+              },
+            }}
+            form={{
+              syncToUrl: (values, type) => {
+                if (type === 'get') {
+                  return {
+                    ...values,
+                    created_at: [values.startTime, values.endTime],
+                  };
+                }
+                return values;
+              },
+            }}
+            formRef={filterRef}
+            dateFormatter="string"
+            toolBarRender={() => [
+              <Button
+                  key="exportDaily"
+                  icon={<ExportOutlined />}
+                  onClick={async () => {
+                    await exportDailyApi(filterRef.current.getFieldsFormatValue());
+                  }}
+                  type="primary"
+              >
+                导出日报
+              </Button>,
+              <Button
+                  key="exportMonthly"
+                  icon={<ExportOutlined />}
+                  onClick={handleShowDatePicker}
+                  type="primary"
+              >
+                导出月报
+              </Button>,
+            ]}
+        />
+        <Modal
+            title="选择月份"
+            visible={showDatePicker}
+            onCancel={handleCancel}
+            onOk={handleExportMonthly}
         >
-          导出日报
-        </Button>,
-      ]}
-    />
+          <DatePicker.MonthPicker onChange={handleMonthChange} />
+        </Modal>
+      </>
   );
 };
