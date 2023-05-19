@@ -239,6 +239,8 @@ export default () => {
         onOk={async () => {
           await auditRefuseApi({ id: record.id });
           actionRef.current.reload();
+          // 关闭弹窗
+          setIsOpen(false);
         }}
         onCancel={() => {
           setIsOpen(false);

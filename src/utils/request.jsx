@@ -41,7 +41,7 @@ export async function request({ url, method, data, headers }) {
 
     if (url.endsWith('/backend/upload')) {
       console.log(url, res, 'res');
-      const urlHost = 'https://hznfsb.oss-cn-hangzhou.aliyuncs.com/';
+      const urlHost = 'http://hznfsb.oss-cn-hangzhou.aliyuncs.com/';
       return `${urlHost}${res.data}`;
     }
 

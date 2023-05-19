@@ -1,22 +1,77 @@
 import React, { useState, useEffect } from 'react';
-import { Card, Row, Col, Statistic } from 'antd';
+import { Card, Row, Col, Statistic, Avatar, Skeleton } from 'antd';
 import { PageHeader } from '@ant-design/pro-layout';
 import { Column } from '@ant-design/plots';
 import { queryHomeData } from './server';
+import CountUp from 'react-countup';
+import {
+  BarChartOutlined,
+  StockOutlined,
+  UsergroupAddOutlined,
+  UsergroupDeleteOutlined,
+  UserOutlined,
+  TeamOutlined,
+  AlertOutlined,
+} from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
+
+/**
+  第一排：昨日新增员工数，昨日正常上班员工数，昨天加班员工数
+  第二排：待审核员工数，总启用员工数，总停用员工数
+ */
 
 const employeeCountMap = {
-  disableCount: '昨日停用',
-  enableCount: '昨日启用',
-  lastDayAdd: '昨日新增',
+  lastDayAdd: '昨日新增员工数',
+  昨日正常上班: '昨日正常上班员工数',
+  昨日加班人数: '昨天加班员工数',
+  waitAuditCount: '待审核员工数',
+  enableCount: '总启用员工数',
+  disableCount: '总停用员工数',
+};
+const formatter = (value) => <CountUp end={value} />;
+const statisticStyle = {
+  waitAuditCount: {
+    prefix: <AlertOutlined />,
+    valueStyle: { color: '#cf1322' },
+    formatter,
+    link: '/employee/jobAudit',
+  },
+  disableCount: {
+    prefix: <UsergroupDeleteOutlined />,
+    valueStyle: { color: '#cf1322' },
+    formatter,
+    link: '/employee/onJob',
+  },
+  enableCount: {
+    prefix: <TeamOutlined />,
+    valueStyle: { color: '#1677FF' },
+    formatter,
+    link: '/employee/onJob',
+  },
+  lastDayAdd: {
+    prefix: <UsergroupAddOutlined />,
+    valueStyle: { color: '#3f8600' },
+    formatter,
+    link: '/employee/onJob',
+  },
+  昨日加班人数: {
+    prefix: <UserOutlined />,
+    valueStyle: { color: '#EA0FB4' },
+    formatter,
+    link: '/attendanceManage/day',
+  },
+  昨日正常上班: {
+    prefix: <UserOutlined />,
+    valueStyle: { color: '#3809F8' },
+    formatter,
+    link: '/attendanceManage/day',
+  },
 };
 
 export default function Dashboard() {
-  // 待审核员工数量
-  const [waitAuditCount, setWaitAuditCount] = useState(0);
-  // 员工工作状态
-  const [employeeWorkCount, setEmployeeWorkCount] = useState({});
-  // 员工统计
-  const [employeeCount, setEmployeeCount] = useState({});
+  const navigate = useNavigate();
+  const [employeesInfo, setEmployeesInfo] = useState({});
+  const [loading, setLoading] = useState(false);
 
   // 等级分布
   const [levelData, setLevelData] = useState([]);
@@ -110,70 +165,118 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    queryHomeData().then((res) => {
-      // 等级分布数据
-      const level = Object.keys(res.levelDistribution || {}).map((key) => ({
-        type: key,
-        sales: res.levelDistribution[key],
-      }));
-      setLevelData(level || []);
-      setEmployeeWorkCount(res.employeeWorkCount || {});
-      // 员工统计
+    setLoading(true);
+    queryHomeData()
+      .then((res) => {
+        // 人数统计
+        const employeesInfos = {
+          waitAuditCount: res.waitAuditCount,
+          ...res.employeeWorkCount,
+          ...res.employeeCount,
+        };
 
-      setEmployeeCount(res.employeeCount);
-      // 待审核员工数量
-      setWaitAuditCount(res.waitAuditCount);
-      // 员工积分排名前十
-      const employeesData = res.employees.map((item) => ({
-        name: item.name,
-        points: item.points,
-      }));
-      setEmployees(employeesData || []);
-    });
+        setEmployeesInfo(employeesInfos);
+
+        // 等级分布数据
+        const level = Object.keys(res.levelDistribution || {}).map((key) => ({
+          type: key,
+          sales: res.levelDistribution[key],
+        }));
+        setLevelData(level || []);
+        // setEmployeeWorkCount(res.employeeWorkCount || {});
+        // 员工统计
+        // setEmployeeCount(res.employeeCount);
+        // 待审核员工数量
+        // setWaitAuditCount(res.waitAuditCount);
+        // 员工积分排名前十
+        const employeesData = res.employees.map((item) => ({
+          name: item.name,
+          points: item.points,
+        }));
+        setEmployees(employeesData || []);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   return (
     <div>
       <PageHeader onBack={() => null} title="数据大盘" backIcon={false} />
       <Row gutter={[24, 24]}>
-        <Col span={8}>
-          <Card title="待审核员工人数" bordered={false}>
-            <Statistic value={waitAuditCount} />
-          </Card>
-        </Col>
-        {
-          Object.keys(employeeWorkCount).map((key) => (
+        {Object.keys(employeeCountMap).map((key) =>
+          (loading ? (
+            <Skeleton active />
+          ) : (
             <Col span={8}>
-              <Card title={`${key}人数`} bordered={false}>
-                <Statistic value={employeeWorkCount[key]} />
+              <Card
+                onClick={() => {
+                  navigate(statisticStyle[key].link);
+                }}
+                title={employeeCountMap[key]}
+                bordered={false}
+                style={{ borderRadius: '8px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)' }}
+                extra={
+                  <Avatar
+                    icon={<StockOutlined />}
+                    style={{
+                      backgroundColor: '#91d5ff',
+                      color: '#1890ff',
+                    }}
+                  />
+                }
+              >
+                <Statistic value={employeesInfo[key]} {...statisticStyle[key]} />
               </Card>
             </Col>
-          ))
-        }
-        {
-          Object.keys(employeeCount).map((key) => (
-            <Col span={8}>
-              <Card title={`${employeeCountMap[key]}人数`} bordered={false}>
-                <Statistic value={employeeCount[key]} />
-              </Card>
-            </Col>
-          ))
-        }
+          )))}
       </Row>
       <Row style={{ marginTop: 24 }} gutter={24}>
         <Col span={12}>
-          <Card title="等级分布（截至昨日23:59:59）" bordered={false}>
-            <div style={{ width: '100%', height: 200 }}>
-              <Column {...ColumnConfig} />
-            </div>
-          </Card>
+          {loading ? (
+            <Skeleton active />
+          ) : (
+            <Card
+              title="等级分布（截至昨日23:59:59）"
+              bordered={false}
+              extra={
+                <Avatar
+                  icon={<BarChartOutlined />}
+                  style={{
+                    backgroundColor: '#91d5ff',
+                    color: '#1890ff',
+                  }}
+                />
+              }
+            >
+              <div style={{ width: '100%', height: 200 }}>
+                <Column {...ColumnConfig} />
+              </div>
+            </Card>
+          )}
         </Col>
         <Col span={12}>
-          <Card title="员工积分排名（截至昨日23:59:59）" bordered={false}>
-            <div style={{ height: 200 }}>
-              <Column {...employeeDataConfig} />
-            </div>
-          </Card>
+          {loading ? (
+            <Skeleton active />
+          ) : (
+            <Card
+              title="员工积分排名（截至昨日23:59:59）"
+              bordered={false}
+              extra={
+                <Avatar
+                  icon={<BarChartOutlined />}
+                  style={{
+                    backgroundColor: '#91d5ff',
+                    color: '#1890ff',
+                  }}
+                />
+              }
+            >
+              <div style={{ height: 200 }}>
+                <Column {...employeeDataConfig} />
+              </div>
+            </Card>
+          )}
         </Col>
       </Row>
     </div>

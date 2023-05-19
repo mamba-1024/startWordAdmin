@@ -1,7 +1,7 @@
 import { ExportOutlined } from '@ant-design/icons';
 import { ProTable } from '@ant-design/pro-components';
 import { useRef } from 'react';
-import { attendanceListApi, exportApi } from '../sever';
+import {attendanceListApi, exportApi, exportDailyApi, exportMonthApi} from '../sever';
 import dayjs from 'dayjs';
 import { Button, message } from 'antd';
 import { isNull } from '../../../utils/index';
@@ -164,31 +164,11 @@ export default () => {
           key="button"
           icon={<ExportOutlined />}
           onClick={async () => {
-            const res = await exportApi(filterRef.current.getFieldsFormatValue());
-            if (res.exportUrl) {
-              window.open(res.exportUrl);
-            } else {
-              message.error('导出失败');
-            }
+            await exportDailyApi(filterRef.current.getFieldsFormatValue());
           }}
           type="primary"
         >
           导出日报
-        </Button>,
-        <Button
-          key="button"
-          icon={<ExportOutlined />}
-          onClick={async () => {
-            const res = await exportApi(filterRef.current.getFieldsFormatValue());
-            if (res.exportUrl) {
-              window.open(res.exportUrl);
-            } else {
-              message.error('导出失败');
-            }
-          }}
-          type="primary"
-        >
-          导出月报
         </Button>,
       ]}
     />

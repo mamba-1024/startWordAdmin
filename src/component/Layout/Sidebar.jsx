@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Image } from 'antd';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { sidebarMenus, sidebarMenusAll } from '../../routes';
@@ -41,6 +41,11 @@ export default () => {
     setOpenKeys(getOpenKeys(sidebarMenusAll, e.key));
   };
 
+  // 页面路由改变的时候，需要重新设置openKeys
+  useEffect(() => {
+    setOpenKeys(getOpenKeys(sidebarMenusAll, location.pathname));
+  }, [location.pathname]);
+
   return (
     <Sider
       collapsible
@@ -58,7 +63,7 @@ export default () => {
         )}
       </div>
       <Menu
-        defaultSelectedKeys={[getKeyByPath(sidebarMenusAll, location.pathname)]}
+        selectedKeys={[getKeyByPath(sidebarMenusAll, location.pathname)]}
         openKeys={openKeys}
         mode="inline"
         items={sidebarMenus}

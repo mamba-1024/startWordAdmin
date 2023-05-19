@@ -14,6 +14,7 @@ import { message, Popconfirm, Table, Space, Button } from 'antd';
 import dayjs from 'dayjs';
 import { useNavigate } from 'react-router-dom';
 import { dateFormat } from '../../../utils/index';
+import { exportApi } from '../../attendanceManage/sever';
 
 export default () => {
   const actionRef = useRef();
@@ -210,19 +211,26 @@ export default () => {
             >
               批量停用
             </Button>
-            <Button
-              type="primary"
-              ghost
-              onClick={async () => {
+            <Popconfirm
+              title="批量积分清零？"
+              description="确定要积分清零吗？"
+              onConfirm={async () => {
                 await batchClearPointsApi(selectedRowKeys);
                 message.success('批量积分清零成功', 0.5, () => {
                   actionRef.current.reload();
                   onCleanSelected();
                 });
               }}
+              okText="确定"
+              cancelText="取消"
             >
-              批量积分清零
-            </Button>
+              <Button
+                type="primary"
+                ghost
+              >
+                批量积分清零
+              </Button>
+            </Popconfirm>,
           </Space>
         );
       }}
@@ -265,9 +273,7 @@ export default () => {
           key="button"
           icon={<ExportOutlined />}
           onClick={async () => {
-            const params = filterRef.current.getFieldsFormatValue();
-            const str = Object.keys(params).map((key) => `${key}=${params[key]}`).join('&');
-            window.open(`${window.location.origin}/backend/employee/export?${str}`);
+            await exportApi(filterRef.current.getFieldsFormatValue());
           }}
           type="primary"
         >

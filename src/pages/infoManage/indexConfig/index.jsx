@@ -4,10 +4,10 @@
 
 import { Upload, message, Button } from 'antd';
 import ImgCrop from 'antd-img-crop';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
 import { getToken } from '../../../utils/token';
-import { updateMainUrlApi, uploadApi } from '../sever';
+import { updateMainUrlApi, uploadApi, getMainUrlApi } from '../sever';
 
 const fileType = [
   // 图片格式
@@ -75,6 +75,18 @@ const App = () => {
       setLoading(false);
     });
   };
+
+  useEffect(() => {
+    getMainUrlApi().then((res) => {
+      setFileList(res.map((item) => ({
+        uid: item,
+        name: item,
+        status: 'done',
+        url: item,
+        response: item,
+      })));
+    });
+  }, []);
 
   return (
     <div className="bg-white">

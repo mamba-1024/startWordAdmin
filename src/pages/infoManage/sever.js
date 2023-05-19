@@ -130,3 +130,11 @@ export async function editEntActionApi(query) {
     data: query,
   });
 }
+
+// 获取首页主图
+export async function getMainUrlApi() {
+  return await request({
+    url: '/backend/index/getUrl',
+    method: 'get',
+  });
+}

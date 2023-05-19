@@ -1,17 +1,10 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-// import {
-//   createStyleImportPlugin,
-// } from 'vite-plugin-style-import';
 import { resolve } from 'path';
+import { terser } from 'rollup-plugin-terser';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  output: {
-    manualChunks: {
-      lodash: ['lodash'],
-    },
-  },
   server: {
     host: '127.0.0.1', // vite默认值
     port: 5173, // vite默认值
@@ -40,18 +33,37 @@ export default defineConfig({
       },
     },
   },
-  plugins: [
-    react(),
-    // createStyleImportPlugin({
-    //   libs: [
-    //     {
-    //       libraryName: 'antd',
-    //       esModule: true,
-    //       resolveStyle: name => `antd/es/${name}/style/index`,
-    //     },
-    //   ],
-    // }),
-  ],
+  build: {
+    rollupOptions: {
+      plugins: [
+        terser({
+          compress: {
+            // 压缩选项
+            drop_console: true, // 删除 console 语句
+            drop_debugger: true, // 删除 debugger 语句
+            pure_funcs: ['console.log'], // 删除 console.log 语句
+            unused: true, // 删除未使用的函数和变量
+            dead_code: true, // 删除不可达的代码
+            // reduce_funcs: true, // 尝试将多个函数合并为一个
+            // reduce_vars: true, // 尝试将多个变量合并为一个
+          },
+          mangle: {
+            // 混淆选项
+            properties: {
+              // 混淆对象属性名
+              regex: /^_/,
+            },
+          },
+          format: {
+            // 输出选项
+            comments: false, // 删除注释
+          },
+          warnings: true, // 是否输出警告信息
+        }),
+      ],
+    },
+  },
+  plugins: [react()],
   css: {
     preprocessorOptions: {
       less: {
@@ -64,19 +76,10 @@ export default defineConfig({
       },
     },
   },
-  resolve: process.env.USE_SOURCE
-    ? {
-      alias: {
-        // "react-router": path.resolve(
-        //   __dirname,
-        //   "../../packages/react-router/index.tsx"
-        // ),
-        'react-router-dom': resolve(
-          __dirname,
-          '../../packages/react-router-dom/index.tsx',
-        ),
-        '@/utils': resolve(__dirname, '/src/utils'),
-      },
-    }
-    : {},
+  resolve: {
+    alias: {
+      '@': resolve(__dirname, 'src'),
+      utils: resolve(__dirname, 'src/utils'),
+    },
+  },
 });

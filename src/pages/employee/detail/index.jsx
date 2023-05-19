@@ -1,15 +1,16 @@
 // Note: 员工详情页
 import { ProDescriptions } from '@ant-design/pro-components';
-import { Image, Card } from 'antd';
+import { Image, Card, Button } from 'antd';
 import { useEffect, useState } from 'react';
 import { detailApi } from '../sever';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 
 export default () => {
   const [searchParams] = useSearchParams();
   const [detail, setDetail] = useState();
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const id = searchParams.get('id');
@@ -28,6 +29,9 @@ export default () => {
   return (
     <Card>
       <ProDescriptions title="基本信息" loading={loading}>
+        <ProDescriptions.Item label="文本" valueType="option">
+          <Button type="primary" ghost onClick={() => navigate(-1)}>返回上一页</Button>
+        </ProDescriptions.Item>
         <ProDescriptions.Item label="姓名">{detail?.name}</ProDescriptions.Item>
         <ProDescriptions.Item label="头像">
           <Image src={detail?.avatar} width={60} height={60} />
