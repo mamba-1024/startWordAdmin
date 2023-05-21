@@ -14,6 +14,7 @@ import {
   AlertOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import dayjs from 'dayjs';
 
 /**
   第一排：昨日新增员工数，昨日正常上班员工数，昨天加班员工数
@@ -34,37 +35,41 @@ const statisticStyle = {
     prefix: <AlertOutlined />,
     valueStyle: { color: '#cf1322' },
     formatter,
-    link: '/employee/jobAudit',
+    link: '/employee/jobAudit?auditStatus=WAIT_AUDIT',
   },
   disableCount: {
     prefix: <UsergroupDeleteOutlined />,
     valueStyle: { color: '#cf1322' },
     formatter,
-    link: '/employee/onJob',
+    link: '/employee/onJob?status=false',
   },
   enableCount: {
     prefix: <TeamOutlined />,
     valueStyle: { color: '#1677FF' },
     formatter,
-    link: '/employee/onJob',
+    link: '/employee/onJob?status=true',
   },
   lastDayAdd: {
     prefix: <UsergroupAddOutlined />,
     valueStyle: { color: '#3f8600' },
     formatter,
-    link: '/employee/onJob',
+    link: `/employee/onJob?enableDateStart=${dayjs()
+      .subtract(1, 'day')
+      .startOf('day')
+      .format('YYYY-MM-DD')}&enableDateEnd=${dayjs()
+      .subtract(1, 'day')
+      .endOf('day')
+      .format('YYYY-MM-DD')}`,
   },
   昨日加班人数: {
     prefix: <UserOutlined />,
     valueStyle: { color: '#EA0FB4' },
     formatter,
-    link: '/attendanceManage/day',
   },
   昨日正常上班: {
     prefix: <UserOutlined />,
     valueStyle: { color: '#3809F8' },
     formatter,
-    link: '/attendanceManage/day',
   },
 };
 
@@ -205,7 +210,7 @@ export default function Dashboard() {
       <PageHeader onBack={() => null} title="数据大盘" backIcon={false} />
       <Row gutter={[24, 24]}>
         {Object.keys(employeeCountMap).map((key) =>
-          (loading ? (
+          loading ? (
             <Skeleton active />
           ) : (
             <Col span={8}>
@@ -229,7 +234,8 @@ export default function Dashboard() {
                 <Statistic value={employeesInfo[key]} {...statisticStyle[key]} />
               </Card>
             </Col>
-          )))}
+          )
+        )}
       </Row>
       <Row style={{ marginTop: 24 }} gutter={24}>
         <Col span={12}>
