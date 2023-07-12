@@ -12,7 +12,7 @@ if (process.env.NODE_ENV === 'production') {
   axios.defaults.baseURL = requestHost;
 }
 
-axios.defaults.timeout = 30000;
+axios.defaults.timeout = 1000000; // 超时时间设置大一点，防止上传文件超时
 axios.defaults.headers.common.Accept = '*/*';
 axios.defaults.headers.common['Content-Type'] = 'application/json';
 // axios.defaults.headers.post['Content-Type'] = 'application/json';
@@ -55,12 +55,12 @@ export async function request({ url, method, data, headers }) {
     message.error(res.statusText);
     return Promise.reject(res.data);
   } catch (error) {
-    // if (error.response.status === 401) {
-    //   message.error('登录过期，请重新登录', 1, () => {
-    //     window.location.href = '/login';
-    //   });
-    //   return Promise.reject(error.response);
-    // }
+    if (error.response.status === 401) {
+      message.error('登录过期，请重新登录', 1, () => {
+        window.location.href = '/login';
+      });
+      return Promise.reject(error.response);
+    }
     message.error(error.response.message);
     return Promise.reject(error.response);
   }

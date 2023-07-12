@@ -12,7 +12,7 @@ import {
   ProFormTextArea,
   ProFormSwitch,
 } from '@ant-design/pro-components';
-import { message, Skeleton, Button, Drawer } from 'antd';
+import { message, Skeleton, Button, Drawer, Spin } from 'antd';
 import {
   uploadApi,
   uploadImgApi,
@@ -47,6 +47,8 @@ function MyEditor() {
   const [detail, setDetail] = useState();
 
   const [open, setOpen] = useState(false);
+  // 正在上传图片
+  const [uploading, setUploading] = useState(false);
 
   // 编辑的时候需要先获取详情
   useEffect(() => {
@@ -89,12 +91,14 @@ function MyEditor() {
   editorConfig.MENU_CONF.uploadImage = {
     // 自定义图片上传配置
     async customUpload(file, insertFn) {
+      setUploading(true);
       // file 即选中的文件
       const res = await uploadImgApi(file);
       const url = res;
       // 自己实现上传，并得到图片 url alt href
       // 最后插入图片
       insertFn(url);
+      setUploading(false);
     },
   };
 
@@ -136,7 +140,8 @@ function MyEditor() {
           }
           const params = {
             title: values.title,
-            [type === 'product' ? 'productMainUrl' : 'actionMainUrl']: values.productMainUrl[0].response,
+            [type === 'product' ? 'productMainUrl' : 'actionMainUrl']:
+              values.productMainUrl[0].response,
             shortDesc: values.shortDesc,
             htmlContent: html,
           };
@@ -173,25 +178,24 @@ function MyEditor() {
           rules={[{ required: true }]}
           initialValue={detail?.title}
         />
-        {
-          type === 'product' ? (
-            <ProFormSwitch
-              rules={[{ required: true }]}
-              initialValue={detail?.showIndex || false}
-              name="showIndex"
-              label="显示在首页"
-              options={[
-                {
-                  label: '是',
-                  value: true,
-                },
-                {
-                  label: '否',
-                  value: false,
-                },
-              ]}
-            />) : null
-        }
+        {type === 'product' ? (
+          <ProFormSwitch
+            rules={[{ required: true }]}
+            initialValue={detail?.showIndex || false}
+            name="showIndex"
+            label="显示在首页"
+            options={[
+              {
+                label: '是',
+                value: true,
+              },
+              {
+                label: '否',
+                value: false,
+              },
+            ]}
+          />
+        ) : null}
 
         <ProFormTextArea
           rules={[{ required: true }]}
@@ -216,29 +220,48 @@ function MyEditor() {
           beforeUpload={beforeUpload}
           onPreview={onPreview}
           formItemProps={{
-            initialValue: detail?.productMainUrl || detail?.actionMainUrl ? [{ status: 'done', url: detail?.productMainUrl || detail?.actionMainUrl }] : [],
+            initialValue:
+              detail?.productMainUrl || detail?.actionMainUrl
+                ? [{ status: 'done', url: detail?.productMainUrl || detail?.actionMainUrl }]
+                : [],
           }}
         />
-        <ProForm.Item label="正文内容" rules={[{ required: true }]} extra={<Button style={{ marginTop: 10 }} type="primary" ghost onClick={() => setOpen(true)}>预览</Button>}>
-          <div style={{ border: '1px solid #ccc', zIndex: 100 }}>
-            <Toolbar
-              editor={editor}
-              defaultConfig={toolbarConfig}
-              mode="default"
-              style={{ borderBottom: '1px solid #ccc' }}
-            />
-            <Editor
-              defaultConfig={editorConfig}
-              value={html}
-              onCreated={setEditor}
-              onChange={(edit) => setHtml(edit.getHtml())}
-              mode="default"
-              style={{ height: '400px', overflowY: 'hidden' }}
-            />
-          </div>
+        <ProForm.Item
+          label="正文内容"
+          rules={[{ required: true }]}
+          extra={
+            <Button style={{ marginTop: 10 }} type="primary" ghost onClick={() => setOpen(true)}>
+              预览
+            </Button>
+          }
+        >
+          <Spin spinning={uploading} tip="图片上传中，请稍后...">
+            <div style={{ border: '1px solid #ccc', zIndex: 100 }}>
+              <Toolbar
+                editor={editor}
+                defaultConfig={toolbarConfig}
+                mode="default"
+                style={{ borderBottom: '1px solid #ccc' }}
+              />
+              <Editor
+                defaultConfig={editorConfig}
+                value={html}
+                onCreated={setEditor}
+                onChange={(edit) => setHtml(edit.getHtml())}
+                mode="default"
+                style={{ height: '400px', overflowY: 'hidden' }}
+              />
+            </div>
+          </Spin>
         </ProForm.Item>
       </ProForm>
-      <Drawer title="正文内容预览" placement="right" onClose={() => setOpen(false)} open={open} zIndex={1200}>
+      <Drawer
+        title="正文内容预览"
+        placement="right"
+        onClose={() => setOpen(false)}
+        open={open}
+        zIndex={1200}
+      >
         <div style={{ marginTop: '15px' }} dangerouslySetInnerHTML={{ __html: html }} />
       </Drawer>
     </>

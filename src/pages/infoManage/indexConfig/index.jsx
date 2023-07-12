@@ -2,7 +2,7 @@
  * @file 信息管理-首页配置
  */
 
-import { Upload, message, Button } from 'antd';
+import { Upload, message, Button, Skeleton } from 'antd';
 import ImgCrop from 'antd-img-crop';
 import { useState, useEffect } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
@@ -39,6 +39,7 @@ export const beforeUpload = (file) => {
 const App = () => {
   const [fileList, setFileList] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(false);
   const onChange = ({ fileList: newFileList }) => {
     setFileList(newFileList);
   };
@@ -57,7 +58,6 @@ const App = () => {
     imgWindow?.document.write(image.outerHTML);
   };
 
-
   const handleSubmit = () => {
     const urls = fileList.map((item) => item.response);
 
@@ -66,46 +66,59 @@ const App = () => {
       return;
     }
     setLoading(true);
-    updateMainUrlApi(urls).then((res) => {
-      console.log(res);
-      message.success('提交成功', 1, () => {
-        setFileList([]);
+    updateMainUrlApi(urls)
+      .then((res) => {
+        console.log(res);
+        message.success('提交成功', 1, () => {
+          setFileList([]);
+        });
+      })
+      .finally(() => {
+        setLoading(false);
       });
-    }).finally(() => {
-      setLoading(false);
-    });
   };
 
   useEffect(() => {
-    getMainUrlApi().then((res) => {
-      setFileList(res.map((item) => ({
-        uid: item,
-        name: item,
-        status: 'done',
-        url: item,
-        response: item,
-      })));
-    });
+    setFetching(true);
+    getMainUrlApi()
+      .then((res) => {
+        setFileList(
+          res.map((item) => ({
+            uid: item,
+            name: item,
+            status: 'done',
+            url: item,
+            response: item,
+          }))
+        );
+      })
+      .finally(() => {
+        setFetching(false);
+      });
   }, []);
 
   return (
     <div className="bg-white">
       <h3>小程序首页轮播图配置</h3>
-      <ImgCrop rotationSlider aspect={2}>
-        <Upload
-          action={uploadApi()}
-          headers={{ Authorization: getToken() }}
-          listType="picture-card"
-          fileList={fileList}
-          onChange={onChange}
-          onPreview={onPreview}
-          beforeUpload={beforeUpload}
-          accept={accept}
-        >
-          <PlusOutlined />
-        </Upload>
-      </ImgCrop>
-      <Button type="primary" loading={loading} onClick={handleSubmit}>提交</Button>
+      <Skeleton loading={fetching} active>
+        <ImgCrop rotationSlider aspect={2}>
+          <Upload
+            action={uploadApi()}
+            headers={{ Authorization: getToken() }}
+            listType="picture-card"
+            fileList={fileList}
+            onChange={onChange}
+            onPreview={onPreview}
+            beforeUpload={beforeUpload}
+            accept={accept}
+          >
+            <PlusOutlined />
+          </Upload>
+        </ImgCrop>
+        <Button type="primary" loading={loading} onClick={handleSubmit}>
+          提交
+        </Button>
+      </Skeleton>
     </div>
   );
 };
